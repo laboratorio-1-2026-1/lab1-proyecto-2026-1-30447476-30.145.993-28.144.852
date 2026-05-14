@@ -2,8 +2,8 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Nume
 from sqlalchemy.orm import relationship
 from app.api.models.base import Base, TimestampMixin
 
-class TicketMantenimiento(Base, TimestampMixin):
-    __tablename__ = "tickets_mantenimiento"
+class TicketsMantenimiento(Base, TimestampMixin):
+    __tablename__ = "ticketsMantenimiento"
     
     idTicketsMantenimiento = Column(Integer, primary_key=True, autoincrement=True)
     maquina_id = Column(Integer, ForeignKey("maquinas.idMaquinas"), nullable=False)
@@ -17,6 +17,7 @@ class TicketMantenimiento(Base, TimestampMixin):
     
     # Relaciones
     maquina = relationship("Maquina", back_populates="tickets")
-    
+    usuario = relationship("Usuario", back_populates="tickets")
+  
     def __repr__(self):
-        return f"<TicketMantenimiento {self.idTicketsMantenimiento} - {self.estado}>"
+        return f"<TicketsMantenimiento {self.idTicketsMantenimiento} - {self.estado}>"

@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
-from app.api.deps import get_db, require_roles
-from app.api.schemas.categorias_productos import (
+from app.api.database.session import get_db
+from app.api.core.security import require_roles
+from app.api.schemas.categoriaProducto import (
     CategoriaProductoCreate,
     CategoriaProductoUpdate,
     CategoriaProductoResponse,
 )
-from app.api.repositories.categorias_productos_repository import CategoriaProductoRepository
+from app.api.repositories.categoria_producto_repository import CategoriaProductoRepository
 
 router = APIRouter(prefix="/categorias-productos", tags=["Categorías de Productos"])
 
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/categorias-productos", tags=["Categorías de Product
 def crear_categoria(
     data: CategoriaProductoCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles("Administrador")),
+    current_user: dict =Depends(require_roles("Administrador")),
 ):
     """
     Crea una nueva categoría de producto.
@@ -46,7 +46,7 @@ def crear_categoria(
 )
 def listar_categorias(
     db: Session = Depends(get_db),
-    _=Depends(require_roles("Administrador", "Finanzas")),
+    current_user: dict =Depends(require_roles("Administrador", "Finanzas")),
 ):
     """
     Obtiene el listado completo de categorías de productos.
@@ -63,7 +63,7 @@ def listar_categorias(
 def obtener_categoria(
     categoria_id: int,
     db: Session = Depends(get_db),
-    _=Depends(require_roles("Administrador", "Finanzas")),
+    current_user: dict =Depends(require_roles("Administrador", "Finanzas")),
 ):
     """
     Devuelve los datos de una categoría específica.
@@ -86,7 +86,7 @@ def actualizar_categoria(
     categoria_id: int,
     data: CategoriaProductoUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles("Administrador")),
+    current_user: dict =Depends(require_roles("Administrador")),
 ):
     """
     Actualiza todos los campos de una categoría. Los campos no enviados se consideran nulos (reemplazo completo).
@@ -119,7 +119,7 @@ def actualizar_categoria_parcial(
     categoria_id: int,
     data: CategoriaProductoUpdate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles("Administrador")),
+    current_user: dict =Depends(require_roles("Administrador")),
 ):
     """
     Actualiza solo los campos enviados de una categoría (actualización parcial).
@@ -151,7 +151,7 @@ def actualizar_categoria_parcial(
 def eliminar_categoria(
     categoria_id: int,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles("Administrador")),
+    current_user: dict =Depends(require_roles("Administrador")),
 ):
     """
     Elimina una categoría de productos.

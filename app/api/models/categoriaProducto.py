@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
-from app.api.database.session import Base
+from app.api.models.base import Base, TimestampMixin
 
 class CategoriaProducto(Base):
-    __tablename__ = "categorias_producto"
+    __tablename__ = "categoriaProducto"
 
     idCategoriaProducto = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(50), nullable=False, unique=True)

@@ -1,27 +1,28 @@
 from decimal import Decimal
 from typing import List, Optional
 from sqlalchemy.orm import Session
-
-from app.api.models.models import VentaTienda, VentaDetalle, ProductoTienda
+from app.api.models.venta import Venta
+from app.api.models.ventaDetalle import VentaDetalle
+from app.api.models.producto import ProductoTienda
 
 
 class VentaRepository:
 
     @staticmethod
-    def get_all(db: Session) -> List[VentaTienda]:
-        return db.query(VentaTienda).order_by(VentaTienda.fechaVenta.desc()).all()
+    def get_all(db: Session) -> List[Venta]:
+        return db.query(Venta).order_by(Venta.fechaVenta.desc()).all()
 
     @staticmethod
-    def get_by_id(db: Session, venta_id: int) -> Optional[VentaTienda]:
-        return db.query(VentaTienda).filter(
-            VentaTienda.idVentasTiendas == venta_id
+    def get_by_id(db: Session, venta_id: int) -> Optional[Venta]:
+        return db.query(Venta).filter(
+            Venta.idVentasTiendas == venta_id
         ).first()
 
     @staticmethod
-    def get_by_cliente(db: Session, cliente_id: int) -> List[VentaTienda]:
-        return db.query(VentaTienda).filter(
-            VentaTienda.cliente_id == cliente_id
-        ).order_by(VentaTienda.fechaVenta.desc()).all()
+    def get_by_cliente(db: Session, cliente_id: int) -> List[Venta]:
+        return db.query(Venta).filter(
+            Venta.cliente_id == cliente_id
+        ).order_by(Venta.fechaVenta.desc()).all()
 
     @staticmethod
     def create(
@@ -30,7 +31,7 @@ class VentaRepository:
         items: List[dict],          # [{"producto_id": int, "cantidad": int}]
         cliente_id: Optional[int] = None,
         metodo_pago: Optional[str] = None,
-    ) -> VentaTienda:
+    ) -> Venta:
         """
         Crea la venta y sus detalles en una sola transacción.
         Asume que el stock ya fue validado antes de llamar este método.
@@ -57,7 +58,7 @@ class VentaRepository:
                 "subtotal": subtotal,
             })
 
-        venta = VentaTienda(
+        venta = Venta(
             cliente_id=cliente_id,
             usuario_id=usuario_id,
             total=total,

@@ -2,35 +2,35 @@ from datetime import date
 from decimal import Decimal
 from typing import List, Optional
 from sqlalchemy.orm import Session
+from app.api.models.ticketsMantenimiento import TicketsMantenimiento
+from app.api.models.maquina import Maquina
 
-from app.api.models.models import TicketMantenimiento, Maquina
 
-
-class TicketMantenimientoRepository:
+class TicketsMantenimientoRepository:
 
     @staticmethod
-    def get_all(db: Session) -> List[TicketMantenimiento]:
-        return db.query(TicketMantenimiento).order_by(
-            TicketMantenimiento.fechaReporte.desc()
+    def get_all(db: Session) -> List[TicketsMantenimiento]:
+        return db.query(TicketsMantenimiento).order_by(
+            TicketsMantenimiento.fechaReporte.desc()
         ).all()
 
     @staticmethod
-    def get_by_id(db: Session, ticket_id: int) -> Optional[TicketMantenimiento]:
-        return db.query(TicketMantenimiento).filter(
-            TicketMantenimiento.idTicketsMantenimiento == ticket_id
+    def get_by_id(db: Session, ticket_id: int) -> Optional[TicketsMantenimiento]:
+        return db.query(TicketsMantenimiento).filter(
+            TicketsMantenimiento.idTicketsMantenimiento == ticket_id
         ).first()
 
     @staticmethod
-    def get_by_maquina(db: Session, maquina_id: int) -> List[TicketMantenimiento]:
-        return db.query(TicketMantenimiento).filter(
-            TicketMantenimiento.maquina_id == maquina_id
-        ).order_by(TicketMantenimiento.fechaReporte.desc()).all()
+    def get_by_maquina(db: Session, maquina_id: int) -> List[TicketsMantenimiento]:
+        return db.query(TicketsMantenimiento).filter(
+            TicketsMantenimiento.maquina_id == maquina_id
+        ).order_by(TicketsMantenimiento.fechaReporte.desc()).all()
 
     @staticmethod
-    def get_abiertos(db: Session) -> List[TicketMantenimiento]:
-        return db.query(TicketMantenimiento).filter(
-            TicketMantenimiento.estado == "Abierto"
-        ).order_by(TicketMantenimiento.fechaReporte.desc()).all()
+    def get_abiertos(db: Session) -> List[TicketsMantenimiento]:
+        return db.query(TicketsMantenimiento).filter(
+            TicketsMantenimiento.estado == "Abierto"
+        ).order_by(TicketsMantenimiento.fechaReporte.desc()).all()
 
     @staticmethod
     def create(
@@ -39,8 +39,8 @@ class TicketMantenimientoRepository:
         usuario_id: int,
         descripcion_falla: str,
         tecnico_responsable: Optional[str] = None,
-    ) -> TicketMantenimiento:
-        ticket = TicketMantenimiento(
+    ) -> TicketsMantenimiento:
+        ticket = TicketsMantenimiento(
             maquina_id=maquina_id,
             usuario_id=usuario_id,
             descripcionFalla=descripcion_falla,
@@ -64,8 +64,8 @@ class TicketMantenimientoRepository:
         fecha_resolucion: date,
         costo_reparacion: Optional[Decimal] = None,
         tecnico_responsable: Optional[str] = None,
-    ) -> Optional[TicketMantenimiento]:
-        ticket = TicketMantenimientoRepository.get_by_id(db, ticket_id)
+    ) -> Optional[TicketsMantenimiento]:
+        ticket = TicketsMantenimientoRepository.get_by_id(db, ticket_id)
         if not ticket:
             return None
 
@@ -87,7 +87,7 @@ class TicketMantenimientoRepository:
 
     @staticmethod
     def exists_abierto_para_maquina(db: Session, maquina_id: int) -> bool:
-        return db.query(TicketMantenimiento).filter(
-            TicketMantenimiento.maquina_id == maquina_id,
-            TicketMantenimiento.estado == "Abierto",
+        return db.query(TicketsMantenimiento).filter(
+            TicketsMantenimiento.maquina_id == maquina_id,
+            TicketsMantenimiento.estado == "Abierto",
         ).first() is not None 

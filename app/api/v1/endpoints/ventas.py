@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 from app.api.database.session import get_db
 from app.api.core.security import require_roles
 from app.api.core.errors import bad_request_response, conflict_response
-from app.api.schemas.schemas import (
+from app.api.schemas.venta import (
     VentaCreate,
-    VentaOut,
+    VentaResponse,
 )
 from app.api.repositories.producto_repository import ProductoRepository
 from app.api.repositories.venta_repository import VentaRepository
@@ -17,14 +17,14 @@ router = APIRouter(prefix="/api/v1/tienda", tags=["Tienda (POS)"])
 
 @router.post(
     "/ventas",
-    response_model=VentaOut,
+    response_model=VentaResponse,
     status_code=201,
     summary="Registrar venta (descuenta stock e impacta finanzas)",
 )
 def registrar_venta(
     data: VentaCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles("Administrador", "Finanzas")),
+    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
 ):
     if not data.items:
         return bad_request_response(
@@ -71,25 +71,25 @@ def registrar_venta(
 
 @router.get(
     "/ventas",
-    response_model=List[VentaOut],
+    response_model=List[VentaResponse],
     summary="Listar historial de ventas",
 )
 def listar_ventas(
     db: Session = Depends(get_db),
-    _=Depends(require_roles("Administrador", "Finanzas")),
+ curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
 ):
     return VentaRepository.get_all(db)
 
 
 @router.get(
     "/ventas/{venta_id}",
-    response_model=VentaOut,
+    response_model=VentaResponse,
     summary="Ver detalle de una transacción",
 )
 def obtener_venta(
     venta_id: int,
     db: Session = Depends(get_db),
-    _=Depends(require_roles("Administrador", "Finanzas")),
+    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
 ):
     venta = VentaRepository.get_by_id(db, venta_id)
     if not venta:

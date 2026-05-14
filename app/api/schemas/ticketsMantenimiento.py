@@ -12,6 +12,10 @@ class TicketUpdate(BaseModel):
     estado: str  # ABIERTO, EN_REPARACION, REPARADO, CERRADO
     costo_reparacion: Optional[float] = None
 
+class TicketResolve(BaseModel):
+    solucion: str
+    costo_reparacion: Optional[float] = None
+
 class TicketResponse(BaseModel):
     id: int
     maquina_id: int

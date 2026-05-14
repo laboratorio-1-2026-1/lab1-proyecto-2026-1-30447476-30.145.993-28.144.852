@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from app.api.models.base import Base  
+from app.api.models.base import Base, TimestampMixin
 
-class CategoriaMaquina(Base):
-    __tablename__ = "categorias_maquinas"
+class CategoriasMaquinas(Base):
+    __tablename__ = "categoriasMaquinas"
 
     idCategoriasMaquinas = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(50), nullable=False)

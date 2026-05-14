@@ -1,8 +1,8 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-
-from app.api.models.models import Maquina, CategoriaMaquina
-from app.api.schemas.schemas import MaquinaCreate, MaquinaUpdate
+from app.api.models.maquina import Maquina
+from app.api.models.categoriasMaquinas import CategoriasMaquinas
+from app.api.schemas.maquina import MaquinaCreate, MaquinaUpdate
 
 
 class MaquinaRepository:
@@ -76,20 +76,20 @@ class MaquinaRepository:
     # ── Categorías ────────────────────────────────────────────────────────────
 
     @staticmethod
-    def get_all_categorias(db: Session) -> List[CategoriaMaquina]:
-        return db.query(CategoriaMaquina).order_by(CategoriaMaquina.idCategoriasMaquinas).all()
+    def get_all_categorias(db: Session) -> List[CategoriasMaquinas]:
+        return db.query(CategoriasMaquinas).order_by(CategoriasMaquinas.idCategoriasMaquinas).all()
 
     @staticmethod
-    def get_categoria_by_id(db: Session, categoria_id: int) -> Optional[CategoriaMaquina]:
-        return db.query(CategoriaMaquina).filter(
-            CategoriaMaquina.idCategoriasMaquinas == categoria_id
+    def get_categoria_by_id(db: Session, categoria_id: int) -> Optional[CategoriasMaquinas]:
+        return db.query(CategoriasMaquinas).filter(
+            CategoriasMaquinas.idCategoriasMaquinas == categoria_id
         ).first()
 
     @staticmethod
     def create_categoria(
         db: Session, nombre: str, descripcion: Optional[str] = None
-    ) -> CategoriaMaquina:
-        categoria = CategoriaMaquina(nombre=nombre, descripcion=descripcion)
+    ) -> CategoriasMaquinas:
+        categoria = CategoriasMaquinas(nombre=nombre, descripcion=descripcion)
         db.add(categoria)
         db.commit()
         db.refresh(categoria)

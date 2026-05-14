@@ -15,6 +15,10 @@ class MaquinaUpdate(BaseModel):
     categoria_id: Optional[int] = None
     estadoOperativo: Optional[str] = None
 
+class MaquinaEstadoUpdate(BaseModel):
+    """Para actualizar solo el estado de la máquina"""
+    estado_operativo: str = Field(..., description="Estado: Activa, En Mantenimiento, Fuera de Servicio")
+
 class MaquinaResponse(BaseModel):
     idMaquinas: int
     nombreMaquina: str

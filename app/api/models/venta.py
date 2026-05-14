@@ -2,21 +2,13 @@ from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enu
 from sqlalchemy.orm import relationship
 import enum
 from app.api.models.base import Base, TimestampMixin
+from app.api.models.ventaDetalle import VentaDetalle
 
 class EstadoVenta(str, enum.Enum):
     COMPLETADA = "COMPLETADA"
     DEVUELTA = "DEVUELTA"
     CANCELADA = "CANCELADA"
 
-# Tabla asociativa para items de venta
-venta_producto_association = Table(
-    'venta_productos',
-    Base.metadata,
-    Column('venta_id', Integer, ForeignKey('ventas.id')),
-    Column('producto_id', Integer, ForeignKey('productos.id')),
-    Column('cantidad', Integer),
-    Column('precio_unitario', Float)
-)
 
 class Venta(Base, TimestampMixin):
     __tablename__ = "ventas"
