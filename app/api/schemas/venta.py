@@ -5,18 +5,18 @@ from typing import List, Optional
 class ItemVenta(BaseModel):
     producto_id: int
     cantidad: int = Field(..., gt=0)
-    precio_unitario: float = Field(..., gt=0)
+    precioUnitario: float = Field(..., gt=0)
 
 class VentaCreate(BaseModel):
     cliente_id: Optional[int] = None
     items: List[ItemVenta]
-    metodo_pago: str
+    metodoPago: str
 
 class VentaResponse(BaseModel):
     id: int
-    numero_venta: str
-    fecha_venta: datetime
-    monto_total: float
+    numeroVenta: str
+    fechaVenta: datetime
+    montoTotal: float
     estado: str
     
     class Config:

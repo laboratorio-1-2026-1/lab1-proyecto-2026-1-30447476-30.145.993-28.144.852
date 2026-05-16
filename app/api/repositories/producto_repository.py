@@ -26,7 +26,7 @@ class ProductoRepository:
         ).first()
 
     @staticmethod
-    def get_by_codigo_barra(db: Session, codigo: str) -> Optional[ProductoTienda]:
+    def get_by_codigoBarra(db: Session, codigo: str) -> Optional[ProductoTienda]:
         return db.query(ProductoTienda).filter(
             ProductoTienda.codigoBarra == codigo
         ).first()

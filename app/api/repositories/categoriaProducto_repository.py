@@ -14,7 +14,7 @@ class CategoriaProductoRepository:
     @staticmethod
     def get_by_id(db: Session, categoria_id: int) -> Optional[CategoriaProducto]:
         return db.query(CategoriaProducto).filter(
-            CategoriaProducto.idCategoriasProductos == categoria_id
+            CategoriaProducto.idCategoriaProducto == categoria_id
         ).first()
 
     @staticmethod

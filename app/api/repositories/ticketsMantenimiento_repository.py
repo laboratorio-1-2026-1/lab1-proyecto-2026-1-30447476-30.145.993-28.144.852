@@ -37,14 +37,14 @@ class TicketsMantenimientoRepository:
         db: Session,
         maquina_id: int,
         usuario_id: int,
-        descripcion_falla: str,
-        tecnico_responsable: Optional[str] = None,
+        descripcionFalla: str,
+        tecnicoResponsable: Optional[str] = None,
     ) -> TicketsMantenimiento:
         ticket = TicketsMantenimiento(
             maquina_id=maquina_id,
             usuario_id=usuario_id,
-            descripcionFalla=descripcion_falla,
-            tecnicoResponsable=tecnico_responsable,
+            descripcionFalla=descripcionFalla,
+            tecnicoResponsable=tecnicoResponsable,
             estado="Abierto",
         )
         # Regla de negocio: cambiar estado de la máquina a "En Mantenimiento"
@@ -61,25 +61,25 @@ class TicketsMantenimientoRepository:
     def resolver(
         db: Session,
         ticket_id: int,
-        fecha_resolucion: date,
-        costo_reparacion: Optional[Decimal] = None,
-        tecnico_responsable: Optional[str] = None,
+        fechaResolucion: date,
+        costoReparacion: Optional[Decimal] = None,
+        tecnicoResponsable: Optional[str] = None,
     ) -> Optional[TicketsMantenimiento]:
         ticket = TicketsMantenimientoRepository.get_by_id(db, ticket_id)
         if not ticket:
             return None
 
-        ticket.fechaResolucion = fecha_resolucion
-        ticket.costoReparacion = costo_reparacion
-        if tecnico_responsable:
-            ticket.tecnicoResponsable = tecnico_responsable
+        ticket.fechaResolucion = fechaResolucion
+        ticket.costoReparacion = costoReparacion
+        if tecnicoResponsable:
+            ticket.tecnicoResponsable = tecnicoResponsable
         ticket.estado = "Resuelto"
 
         # Regla de negocio: rehabilitar máquina a "Activa"
         maquina = db.query(Maquina).filter(Maquina.idMaquinas == ticket.maquina_id).first()
         if maquina:
             maquina.estadoOperativo = "Activa"
-            maquina.ultimoMantenimiento = fecha_resolucion
+            maquina.ultimoMantenimiento = fechaResolucion
 
         db.commit()
         db.refresh(ticket)

@@ -8,7 +8,7 @@ class ProductoCreate(BaseModel):
     categoriaProducto_id: int
     precio: float = Field(..., gt=0)
     stock: int = Field(0, ge=0)
-    codigo_barra: Optional[str] = Field(None, max_length=50)
+    codigoBarra: Optional[str] = Field(None, max_length=50)
     activo: bool = True
 
 class ProductoUpdate(BaseModel):
@@ -17,7 +17,7 @@ class ProductoUpdate(BaseModel):
     categoriaProducto_id: Optional[int] = None
     precio: Optional[float] = Field(None, gt=0)
     stock: Optional[int] = Field(None, ge=0)
-    codigo_barra: Optional[str] = None
+    codigoBarra: Optional[str] = None
     activo: Optional[bool] = None
 
 class ProductoStockUpdate(BaseModel):
@@ -31,7 +31,7 @@ class ProductoResponse(BaseModel):
     categoriaProducto_id: int
     precio: float
     stock: int
-    codigo_barra: Optional[str]
+    codigoBarra: Optional[str]
     activo: bool
     created_at: datetime
     updated_at: Optional[datetime] = None

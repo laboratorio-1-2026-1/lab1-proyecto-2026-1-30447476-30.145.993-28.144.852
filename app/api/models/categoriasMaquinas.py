@@ -3,13 +3,15 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.api.models.base import Base, TimestampMixin
 
-class CategoriasMaquinas(Base):
+class CategoriasMaquinas(Base, TimestampMixin):
     __tablename__ = "categoriasMaquinas"
 
     idCategoriasMaquinas = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(50), nullable=False)
+    nombre = Column(String(50), nullable=False, unique=True)
     descripcion = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     # Relación 
     maquinas = relationship("Maquina", back_populates="categoria")
+
+    

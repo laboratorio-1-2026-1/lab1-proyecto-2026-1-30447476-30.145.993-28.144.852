@@ -14,8 +14,8 @@ class VentaService:
     def registrar_venta(
         self,
         cliente_id: int,
-        items: List[Dict],  # [{"producto_id": 1, "cantidad": 2, "precio_unitario": 15.0}]
-        metodo_pago: str
+        items: List[Dict],  # [{"producto_id": 1, "cantidad": 2, "precioUnitario": 15.0}]
+        metodoPago: str
     ) -> dict:
         """
         LÓGICA CRÍTICA: Registrar venta y decrementar stock automáticamente
@@ -47,13 +47,13 @@ class VentaService:
         
         # Validar regla de negocio: Método de pago válido
         metodos_validos = ["efectivo", "tarjeta", "transferencia", "credito"]
-        if metodo_pago.lower() not in metodos_validos:
+        if metodoPago.lower() not in metodos_validos:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail={
                     "error": "Conflict",
-                    "codigoInterno": "ERR_METODO_PAGO_INVALIDO",
-                    "mensaje": f"Método de pago '{metodo_pago}' no válido. Métodos permitidos: {', '.join(metodos_validos)}",
+                    "codigoInterno": "ERR_metodoPago_INVALIDO",
+                    "mensaje": f"Método de pago '{metodoPago}' no válido. Métodos permitidos: {', '.join(metodos_validos)}",
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
@@ -78,7 +78,7 @@ class VentaService:
             venta = self.venta_repo.crear_venta_con_items(
                 cliente_id=cliente_id,
                 items=items,
-                metodo_pago=metodo_pago
+                metodoPago=metodoPago
             )
         except ValueError as e:
             raise HTTPException(
@@ -97,18 +97,18 @@ class VentaService:
             "mensaje": "Venta registrada exitosamente.",
             "data": {
                 "id": venta.id,
-                "numero_venta": venta.numero_venta,
+                "numeroVenta": venta.numeroVenta,
                 "cliente_id": cliente_id,
-                "fecha_venta": venta.fecha_venta.isoformat() if hasattr(venta.fecha_venta, 'isoformat') else venta.fecha_venta,
-                "monto_total": float(venta.monto_total),
-                "metodo_pago": metodo_pago,
+                "fechaVenta": venta.fechaVenta.isoformat() if hasattr(venta.fechaVenta, 'isoformat') else venta.fechaVenta,
+                "montoTotal": float(venta.montoTotal),
+                "metodoPago": metodoPago,
                 "estado": venta.estado.value if hasattr(venta.estado, 'value') else venta.estado,
                 "items": [
                     {
                         "producto_id": item.get("producto_id"),
                         "cantidad": item.get("cantidad"),
-                        "precio_unitario": float(item.get("precio_unitario")) if item.get("precio_unitario") else None,
-                        "subtotal": float(item.get("cantidad", 0) * item.get("precio_unitario", 0))
+                        "precioUnitario": float(item.get("precioUnitario")) if item.get("precioUnitario") else None,
+                        "subtotal": float(item.get("cantidad", 0) * item.get("precioUnitario", 0))
                     }
                     for item in items
                 ]

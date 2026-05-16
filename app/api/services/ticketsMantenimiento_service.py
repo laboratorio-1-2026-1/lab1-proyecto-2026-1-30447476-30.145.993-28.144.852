@@ -46,9 +46,9 @@ class MantenimientoService:
         ticket = self.repo.create(
             maquina_id=maquina_id,
             usuario_id=data.usuario_id if hasattr(data, 'usuario_id') else None,
-            descripcion_falla=data.descripcion_falla,
-            tecnico_responsable=data.tecnico_responsable if hasattr(data, 'tecnico_responsable') else None,
-            costo_reparacion=data.costo_reparacion if hasattr(data, 'costo_reparacion') else None
+            descripcionFalla=data.descripcionFalla,
+            tecnicoResponsable=data.tecnicoResponsable if hasattr(data, 'tecnicoResponsable') else None,
+            costoReparacion=data.costoReparacion if hasattr(data, 'costoReparacion') else None
         )
 
         # Cambiar estado de la máquina si está activa
@@ -62,11 +62,11 @@ class MantenimientoService:
             "data": {
                 "id": ticket.id,
                 "maquina_id": ticket.maquina_id,
-                "descripcion_falla": ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else ticket.descripcion_falla if hasattr(ticket, 'descripcion_falla') else None,
+                "descripcionFalla": ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else None,
                 "estado": ticket.estado,
-                "costo_reparacion": float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else float(ticket.costo_reparacion) if hasattr(ticket, 'costo_reparacion') and ticket.costo_reparacion else None,
-                "fecha_apertura": ticket.fechaReporte.isoformat() if hasattr(ticket, 'fechaReporte') and ticket.fechaReporte else ticket.fecha_apertura.isoformat() if hasattr(ticket, 'fecha_apertura') and ticket.fecha_apertura else None,
-                "fecha_resolucion": None
+                "costoReparacion": float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else None,
+                "fechaApertura": ticket.fechaReporte.isoformat() if hasattr(ticket, 'fechaReporte') and ticket.fechaReporte else ticket.fecha_apertura.isoformat() if hasattr(ticket, 'fecha_apertura') and ticket.fecha_apertura else None,
+                "fechaResolucion": None
             }
         }
 
@@ -96,11 +96,11 @@ class MantenimientoService:
             "data": [
                 {
                     "id": t.id,
-                    "descripcion_falla": t.descripcionFalla if hasattr(t, 'descripcionFalla') else t.descripcion_falla if hasattr(t, 'descripcion_falla') else None,
+                    "descripcionFalla": t.descripcionFalla if hasattr(t, 'descripcionFalla') else t.descripcionFalla if hasattr(t, 'descripcionFalla') else None,
                     "estado": t.estado,
-                    "costo_reparacion": float(t.costoReparacion) if hasattr(t, 'costoReparacion') and t.costoReparacion else float(t.costo_reparacion) if hasattr(t, 'costo_reparacion') and t.costo_reparacion else None,
-                    "fecha_apertura": t.fechaReporte.isoformat() if hasattr(t, 'fechaReporte') and t.fechaReporte else t.fecha_apertura.isoformat() if hasattr(t, 'fecha_apertura') and t.fecha_apertura else None,
-                    "fecha_resolucion": t.fechaResolucion.isoformat() if hasattr(t, 'fechaResolucion') and t.fechaResolucion else t.fecha_resolucion.isoformat() if hasattr(t, 'fecha_resolucion') and t.fecha_resolucion else None
+                    "costoReparacion": float(t.costoReparacion) if hasattr(t, 'costoReparacion') and t.costoReparacion else float(t.costoReparacion) if hasattr(t, 'costoReparacion') and t.costoReparacion else None,
+                    "fechaApertura": t.fechaReporte.isoformat() if hasattr(t, 'fechaReporte') and t.fechaReporte else t.fecha_apertura.isoformat() if hasattr(t, 'fecha_apertura') and t.fecha_apertura else None,
+                    "fechaResolucion": t.fechaResolucion.isoformat() if hasattr(t, 'fechaResolucion') and t.fechaResolucion else t.fechaResolucion.isoformat() if hasattr(t, 'fechaResolucion') and t.fechaResolucion else None
                 }
                 for t in tickets
             ]
@@ -126,11 +126,11 @@ class MantenimientoService:
             "data": {
                 "id": ticket.id,
                 "maquina_id": ticket.maquina_id,
-                "descripcion_falla": ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else ticket.descripcion_falla if hasattr(ticket, 'descripcion_falla') else None,
+                "descripcionFalla": ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else ticket.descripcionFalla if hasattr(ticket, 'descripcionFalla') else None,
                 "estado": ticket.estado,
-                "costo_reparacion": float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else float(ticket.costo_reparacion) if hasattr(ticket, 'costo_reparacion') and ticket.costo_reparacion else None,
-                "fecha_apertura": ticket.fechaReporte.isoformat() if hasattr(ticket, 'fechaReporte') and ticket.fechaReporte else ticket.fecha_apertura.isoformat() if hasattr(ticket, 'fecha_apertura') and ticket.fecha_apertura else None,
-                "fecha_resolucion": ticket.fechaResolucion.isoformat() if hasattr(ticket, 'fechaResolucion') and ticket.fechaResolucion else ticket.fecha_resolucion.isoformat() if hasattr(ticket, 'fecha_resolucion') and ticket.fecha_resolucion else None
+                "costoReparacion": float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else float(ticket.costoReparacion) if hasattr(ticket, 'costoReparacion') and ticket.costoReparacion else None,
+                "fechaApertura": ticket.fechaReporte.isoformat() if hasattr(ticket, 'fechaReporte') and ticket.fechaReporte else ticket.fecha_apertura.isoformat() if hasattr(ticket, 'fecha_apertura') and ticket.fecha_apertura else None,
+                "fechaResolucion": ticket.fechaResolucion.isoformat() if hasattr(ticket, 'fechaResolucion') and ticket.fechaResolucion else ticket.fechaResolucion.isoformat() if hasattr(ticket, 'fechaResolucion') and ticket.fechaResolucion else None
             }
         }
 
@@ -163,8 +163,8 @@ class MantenimientoService:
         # Resolver el ticket usando el método resolver del repositorio
         ticket_actualizado = self.repo.resolver(
             ticket_id=ticket_id,
-            costo_reparacion=data.costo_reparacion if hasattr(data, 'costo_reparacion') else None,
-            tecnico_responsable=data.tecnico_responsable if hasattr(data, 'tecnico_responsable') else None
+            costoReparacion=data.costoReparacion if hasattr(data, 'costoReparacion') else None,
+            tecnicoResponsable=data.tecnicoResponsable if hasattr(data, 'tecnicoResponsable') else None
         )
 
         if not ticket_actualizado:
@@ -193,8 +193,8 @@ class MantenimientoService:
                 "id": ticket_actualizado.id,
                 "maquina_id": ticket_actualizado.maquina_id,
                 "estado": ticket_actualizado.estado,
-                "costo_reparacion": float(ticket_actualizado.costoReparacion) if hasattr(ticket_actualizado, 'costoReparacion') and ticket_actualizado.costoReparacion else float(ticket_actualizado.costo_reparacion) if hasattr(ticket_actualizado, 'costo_reparacion') and ticket_actualizado.costo_reparacion else None,
-                "fecha_apertura": ticket_actualizado.fechaReporte.isoformat() if hasattr(ticket_actualizado, 'fechaReporte') and ticket_actualizado.fechaReporte else ticket_actualizado.fecha_apertura.isoformat() if hasattr(ticket_actualizado, 'fecha_apertura') and ticket_actualizado.fecha_apertura else None,
-                "fecha_resolucion": datetime.now(timezone.utc).isoformat()
+                "costoReparacion": float(ticket_actualizado.costoReparacion) if hasattr(ticket_actualizado, 'costoReparacion') and ticket_actualizado.costoReparacion else float(ticket_actualizado.costoReparacion) if hasattr(ticket_actualizado, 'costoReparacion') and ticket_actualizado.costoReparacion else None,
+                "fechaApertura": ticket_actualizado.fechaReporte.isoformat() if hasattr(ticket_actualizado, 'fechaReporte') and ticket_actualizado.fechaReporte else ticket_actualizado.fecha_apertura.isoformat() if hasattr(ticket_actualizado, 'fecha_apertura') and ticket_actualizado.fecha_apertura else None,
+                "fechaResolucion": datetime.now(timezone.utc).isoformat()
             }
         }

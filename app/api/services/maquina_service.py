@@ -157,7 +157,7 @@ class MaquinaService:
             "data": None
         }
 
-    def cambiar_estado(self, id: int, nuevo_estado: EstadoMaquina):
+    def cambiar_estado(self, id: int, nuevoEstado: EstadoMaquina):
         # Verificar si existe
         maquina_existente = self.repo.get(id)
         if not maquina_existente:
@@ -172,16 +172,16 @@ class MaquinaService:
             )
         
         
-        maquina_actualizada = self.repo.update(id, estado=nuevo_estado)
+        maquina_actualizada = self.repo.update(id, estado=nuevoEstado)
         
         return {
             "status": "success",
-            "mensaje": f"Estado de la máquina actualizado a '{nuevo_estado.value}' exitosamente.",
+            "mensaje": f"Estado de la máquina actualizado a '{nuevoEstado.value}' exitosamente.",
             "data": {
                 "id": maquina_actualizada.id,
                 "nombre": maquina_actualizada.nombre,
                 "estado_anterior": maquina_existente.estado,
-                "estado_nuevo": nuevo_estado,
+                "estado_nuevo": nuevoEstado,
                 "updated_at": maquina_actualizada.updated_at.isoformat() if maquina_actualizada.updated_at else None
             }
         }

@@ -8,7 +8,7 @@ from app.api.schemas.categoriaProducto import (
     CategoriaProductoUpdate,
     CategoriaProductoResponse,
 )
-from app.api.repositories.categoria_producto_repository import CategoriaProductoRepository
+from app.api.repositories.categoriaProducto_repository import CategoriaProductoRepository
 
 router = APIRouter(prefix="/categorias-productos", tags=["Categorías de Productos"])
 

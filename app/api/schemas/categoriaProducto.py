@@ -15,7 +15,8 @@ class CategoriaProductoUpdate(BaseModel):
     descripcion: Optional[str] = None
 
 class CategoriaProductoResponse(CategoriaProductoBase):
-    idCategoriasProductos: int = Field(..., description="ID único de la categoría")
+    idCategoriaProducto: int = Field(..., description="ID único de la categoría")
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+    

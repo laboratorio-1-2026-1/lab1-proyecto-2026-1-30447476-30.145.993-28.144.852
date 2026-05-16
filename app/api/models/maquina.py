@@ -4,9 +4,9 @@ import enum
 from app.api.models.base import Base, TimestampMixin
 
 class EstadoMaquina(str, enum.Enum):
-    ACTIVA = "ACTIVA"
-    EN_MANTENIMIENTO = "EN MANTENIMIENTO"
-    FUERA_DE_SERVICIO = "FUERA DE SERVICIO"
+    ACTIVA = "Activa"
+    EN_MANTENIMIENTO = "En Mantenimiento"
+    FUERA_DE_SERVICIO = "Fuera de Servicio"
 
 class Maquina(Base, TimestampMixin):
     __tablename__ = "maquinas"

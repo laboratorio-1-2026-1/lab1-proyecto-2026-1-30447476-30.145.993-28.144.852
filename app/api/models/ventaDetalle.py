@@ -5,11 +5,11 @@ from app.api.models.base import Base, TimestampMixin
 class VentaDetalle(Base, TimestampMixin):
     __tablename__ = "ventasDetalle"
 
-    id = Column(Integer, primary_key=True, index=True)
-    venta_id = Column(Integer, ForeignKey("ventas.id"), nullable=False)
-    producto_id = Column(Integer, ForeignKey("productosTienda.id"), nullable=False)
+    idVentaDetalles = Column(Integer, primary_key=True, index=True)
+    venta_id = Column(Integer, ForeignKey("ventas.idVenta"), nullable=False)
+    producto_id = Column(Integer, ForeignKey("productosTienda.idProductosTienda"), nullable=False)
     cantidad = Column(Integer, nullable=False)
-    precio_unitario = Column(Float, nullable=False)
+    precioUnitario = Column(Float, nullable=False)
     subtotal = Column(Float, nullable=False)
     
 

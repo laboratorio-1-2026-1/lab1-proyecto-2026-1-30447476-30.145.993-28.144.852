@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
 from app.api.models.base import Base, TimestampMixin
 
-class CategoriaProducto(Base):
+class CategoriaProducto(Base, TimestampMixin):
     __tablename__ = "categoriaProducto"
 
     idCategoriaProducto = Column(Integer, primary_key=True, index=True)

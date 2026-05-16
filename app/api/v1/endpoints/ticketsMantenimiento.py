@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from app.api.database.session import get_db
 from app.api.core.security import require_roles
 from app.api.core.errors import conflict_response
@@ -13,7 +12,7 @@ from app.api.schemas.ticketsMantenimiento import (
 from app.api.repositories.maquina_repository import MaquinaRepository
 from app.api.repositories.ticketsMantenimiento_repository import TicketsMantenimientoRepository
 
-router = APIRouter(prefix="/api/v1", tags=["Máquinas e Instalaciones"])
+router = APIRouter(prefix="/tickets-mantenimiento", tags=["Máquinas e Instalaciones"])
 
 
 @router.get(
@@ -55,9 +54,9 @@ def abrir_ticket(
     return TicketsMantenimientoRepository.create(
         db,
         maquina_id=data.maquina_id,
-        usuario_id=current_user.idUsuarios,
-        descripcion_falla=data.descripcionFalla,
-        tecnico_responsable=data.tecnicoResponsable,
+        usuario_id=current_user["user_id"],
+        descripcionFalla=data.descripcionFalla,
+        tecnicoResponsable=data.tecnicoResponsable,
     )
 
 
@@ -85,7 +84,7 @@ def resolver_ticket(
     return TicketsMantenimientoRepository.resolver(
         db,
         ticket_id=ticket_id,
-        fecha_resolucion=data.fechaResolucion,
-        costo_reparacion=data.costoReparacion,
-        tecnico_responsable=data.tecnicoResponsable,
+        fechaResolucion=data.fechaResolucion,
+        costoReparacion=data.costoReparacion,
+        tecnicoResponsable=data.tecnicoResponsable,
     )

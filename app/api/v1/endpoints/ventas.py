@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-
 from app.api.database.session import get_db
 from app.api.core.security import require_roles
 from app.api.core.errors import bad_request_response, conflict_response
@@ -12,7 +11,7 @@ from app.api.schemas.venta import (
 from app.api.repositories.producto_repository import ProductoRepository
 from app.api.repositories.venta_repository import VentaRepository
 
-router = APIRouter(prefix="/api/v1/tienda", tags=["Tienda (POS)"])
+router = APIRouter(prefix="/tienda", tags=["Tienda (POS)"])
 
 
 @router.post(
@@ -65,7 +64,7 @@ def registrar_venta(
         usuario_id=current_user.idUsuarios,
         items=items_dict,
         cliente_id=data.cliente_id,
-        metodo_pago=data.metodoPago,
+        metodoPago=data.metodoPago,
     )
 
 
@@ -76,7 +75,7 @@ def registrar_venta(
 )
 def listar_ventas(
     db: Session = Depends(get_db),
- curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
+    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
 ):
     return VentaRepository.get_all(db)
 

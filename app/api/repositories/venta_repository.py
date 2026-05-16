@@ -30,7 +30,7 @@ class VentaRepository:
         usuario_id: int,
         items: List[dict],          # [{"producto_id": int, "cantidad": int}]
         cliente_id: Optional[int] = None,
-        metodo_pago: Optional[str] = None,
+        metodoPago: Optional[str] = None,
     ) -> Venta:
         """
         Crea la venta y sus detalles en una sola transacción.
@@ -44,8 +44,8 @@ class VentaRepository:
                 ProductoTienda.idProductosTienda == item["producto_id"]
             ).first()
 
-            precio_unitario = producto.precio
-            subtotal = precio_unitario * item["cantidad"]
+            precioUnitario = producto.precio
+            subtotal = precioUnitario * item["cantidad"]
             total += subtotal
 
             # Descontar stock dentro de la misma transacción
@@ -54,7 +54,7 @@ class VentaRepository:
             detalles_data.append({
                 "producto_id": item["producto_id"],
                 "cantidad": item["cantidad"],
-                "precioUnitario": precio_unitario,
+                "precioUnitario": precioUnitario,
                 "subtotal": subtotal,
             })
 
@@ -62,7 +62,7 @@ class VentaRepository:
             cliente_id=cliente_id,
             usuario_id=usuario_id,
             total=total,
-            metodoPago=metodo_pago,
+            metodoPago=metodoPago,
         )
         db.add(venta)
         db.flush()  # obtener el ID antes de crear detalles

@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from typing import Optional, List
 from datetime import datetime, timezone
 from app.api.repositories.producto_repository import ProductoRepository
-from app.api.repositories.categoria_producto_repository import CategoriaProductoRepository
+from app.api.repositories.categoriaProducto_repository import CategoriaProductoRepository
 from app.api.schemas.producto import ProductoCreate, ProductoUpdate
 from app.api.models.producto import Producto
 
@@ -15,30 +15,31 @@ class ProductoService:
 
     def crear(self, data: ProductoCreate):
         # Validar que la categoría exista (regla de negocio)
-        categoria = self.cat_repo.get(data.categoria_producto_id)
+        categoria = self.cat_repo.get(data.categoriaProducto_id
+)
         if not categoria:
             raise HTTPException(
                 status_code=409,
                 detail={
                     "error": "Conflict",
                     "codigoInterno": "ERR_CATEGORIA_NO_VALIDA",
-                    "mensaje": f"Categoría de producto con ID {data.categoria_producto_id} no válida o no existe.",
+                    "mensaje": f"Categoría de producto con ID {data.categoriaProducto_id} no válida o no existe.",
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
         
         # Validar código de barras único (regla de negocio)
-        if data.codigo_barra:
+        if data.codigoBarra:
             existente = self.repo.db.query(self.repo.model).filter(
-                self.repo.model.codigo_barra == data.codigo_barra
+                self.repo.model.codigoBarra == data.codigoBarra
             ).first()
             if existente:
                 raise HTTPException(
                     status_code=409,
                     detail={
                         "error": "Conflict",
-                        "codigoInterno": "ERR_CODIGO_BARRAS_DUPLICADO",
-                        "mensaje": f"Ya existe un producto con el código de barras '{data.codigo_barra}'.",
+                        "codigoInterno": "ERR_codigoBarraS_DUPLICADO",
+                        "mensaje": f"Ya existe un producto con el código de barras '{data.codigoBarra}'.",
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     }
                 )
@@ -53,8 +54,8 @@ class ProductoService:
             "data": {
                 "id": producto_creado.id,
                 "nombre": producto_creado.nombre,
-                "codigo_barra": producto_creado.codigo_barra,
-                "categoria_producto_id": producto_creado.categoria_producto_id,
+                "codigoBarra": producto_creado.codigoBarra,
+                "categoriaProducto_id": producto_creado.categoriaProducto_id,
                 "activo": producto_creado.activo,
                 "created_at": producto_creado.created_at.isoformat() if hasattr(producto_creado, 'created_at') and producto_creado.created_at else None
             }
@@ -75,8 +76,9 @@ class ProductoService:
                 {
                     "id": p.id,
                     "nombre": p.nombre,
-                    "codigo_barra": p.codigo_barra,
-                    "categoria_producto_id": p.categoria_producto_id,
+                    "codigoBarra": p.codigoBarra,
+                    "categoriaProducto_id": p.categoriaProducto_id
+,
                     "activo": p.activo,
                     "precio": float(p.precio) if hasattr(p, 'precio') and p.precio else None,
                     "stock": p.stock if hasattr(p, 'stock') else None
@@ -105,8 +107,9 @@ class ProductoService:
                 "id": producto.id,
                 "nombre": producto.nombre,
                 "descripcion": producto.descripcion if hasattr(producto, 'descripcion') else None,
-                "codigo_barra": producto.codigo_barra,
-                "categoria_producto_id": producto.categoria_producto_id,
+                "codigoBarra": producto.codigoBarra,
+                "categoriaProducto_id": producto.categoriaProducto_id
+,
                 "activo": producto.activo,
                 "precio": float(producto.precio) if hasattr(producto, 'precio') and producto.precio else None,
                 "stock": producto.stock if hasattr(producto, 'stock') else None,
@@ -133,9 +136,9 @@ class ProductoService:
             raise e
         
         # Validar código de barras único si se está actualizando (regla de negocio)
-        if data.codigo_barra:
+        if data.codigoBarra:
             existente = self.repo.db.query(self.repo.model).filter(
-                self.repo.model.codigo_barra == data.codigo_barra,
+                self.repo.model.codigoBarra == data.codigoBarra,
                 self.repo.model.id != producto_id
             ).first()
             if existente:
@@ -143,22 +146,23 @@ class ProductoService:
                     status_code=409,
                     detail={
                         "error": "Conflict",
-                        "codigoInterno": "ERR_CODIGO_BARRAS_DUPLICADO",
-                        "mensaje": f"El código de barras '{data.codigo_barra}' ya está en uso por otro producto.",
+                        "codigoInterno": "ERR_CODIGOBARRA_DUPLICADO",
+                        "mensaje": f"El código de barras '{data.codigoBarra}' ya está en uso por otro producto.",
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     }
                 )
         
         # Validar categoría si se actualiza (regla de negocio)
-        if data.categoria_producto_id:
-            categoria = self.cat_repo.get(data.categoria_producto_id)
+        if data.categoriaProducto_id:
+            categoria = self.cat_repo.get(data.categoriaProducto_id
+)
             if not categoria:
                 raise HTTPException(
                     status_code=409,
                     detail={
                         "error": "Conflict",
                         "codigoInterno": "ERR_CATEGORIA_NO_VALIDA",
-                        "mensaje": f"Categoría de producto con ID {data.categoria_producto_id} no válida o no existe.",
+                        "mensaje": f"Categoría de producto con ID {data.categoriaProducto_id} no válida o no existe.",
                         "timestamp": datetime.now(timezone.utc).isoformat()
                     }
                 )
@@ -172,8 +176,9 @@ class ProductoService:
             "data": {
                 "id": producto_actualizado.id,
                 "nombre": producto_actualizado.nombre,
-                "codigo_barra": producto_actualizado.codigo_barra,
-                "categoria_producto_id": producto_actualizado.categoria_producto_id,
+                "codigoBarra": producto_actualizado.codigoBarra,
+                "categoriaProducto_id": producto_actualizado.categoriaProducto_id
+,
                 "activo": producto_actualizado.activo,
                 "precio": float(producto_actualizado.precio) if hasattr(producto_actualizado, 'precio') and producto_actualizado.precio else None,
                 "stock": producto_actualizado.stock if hasattr(producto_actualizado, 'stock') else None,

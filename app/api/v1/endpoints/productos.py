@@ -12,9 +12,9 @@ from app.api.schemas.producto import (
     ProductoResponse,
 )
 from app.api.repositories.producto_repository import ProductoRepository
-from app.api.repositories.categoria_producto_repository import CategoriaProductoRepository
+from app.api.repositories.categoriaProducto_repository import CategoriaProductoRepository
 
-router = APIRouter(prefix="/api/v1/tienda", tags=["Tienda (POS)"])
+router = APIRouter(prefix="/tienda/productos", tags=["Tienda (POS)"])
 
 @router.get("/productos", response_model=List[ProductoResponse])
 def listar_productos(
