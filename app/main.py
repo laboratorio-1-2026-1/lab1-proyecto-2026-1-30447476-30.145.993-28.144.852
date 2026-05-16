@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.core.config import settings
-from app.api.database.session import engine, Base, create_tables
-from app.api.v1.routers import api_router
+from app.api.database.session import engine, Base
+from app.api.v1.routers import router as api_router
+
 
 # Crear tablas en la base de datos
 Base.metadata.create_all(bind=engine)

@@ -1,3 +1,3 @@
 from .maquina_service import MaquinaService
-from .mantenimiento_service import MantenimientoService
+from .ticketsMantenimiento_service import MantenimientoService
 from .venta_service import VentaService

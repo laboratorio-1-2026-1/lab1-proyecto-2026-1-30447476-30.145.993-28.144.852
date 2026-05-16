@@ -4,7 +4,4 @@ from .ticketsMantenimiento_repository import TicketsMantenimientoRepository
 from .categoriaProducto_repository import CategoriaProductoRepository
 from .producto_repository import ProductoRepository
 from .venta_repository import VentaRepository
-from .cliente_repository import ClienteRepository
-from .finanzas_repository import FinanzasRepository
-from .sesion_repository import SesionRepository
 from .usuario_repository import UsuarioRepository
