@@ -1,138 +1,124 @@
-# app/services/usuario_service.py
+from datetime import datetime, timezone
+from typing import Optional
 from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
-from passlib.context import CryptContext
-from app.models.usuario import Usuario
-from app.models.rol import Rol
-from app.schemas.usuario import UsuarioCreate, UsuarioUpdate
+from app.api.repositories.usuario_repository import UsuarioRepository, RolRepository
+from app.api.core.security import hash_password
+from app.api.schemas.usuario import UsuarioCreate, UsuarioUpdate
+from app.api.exceptions.custom_exceptions import (
+    conflict_response, not_found_response, bad_request_response,
+)
 
-# Configuración de hashing de contraseñas
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-def hash_password(password: str) -> str:
-    """Hashea una contraseña usando bcrypt."""
-    return pwd_context.hash(password)
+def _ts():
+    return datetime.now(timezone.utc).isoformat() + "Z"
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifica una contraseña contra su hash."""
-    return pwd_context.verify(plain_password, hashed_password)
 
-def get_usuario_by_email(db: Session, email: str):
-    """Obtiene un usuario por su email (único)."""
-    return db.query(Usuario).filter(Usuario.email == email).first()
+class UsuarioService:
+    def __init__(self, db: Session):
+        self.repo = UsuarioRepository(db)
+        self.roles = RolRepository(db)
 
-def get_usuario_by_cedula(db: Session, cedula: str):
-    """Obtiene un usuario por su cédula (única)."""
-    return db.query(Usuario).filter(Usuario.cedula == cedula).first()
+    def listar_usuarios(self, skip=0, limit=100,
+                        activo=None, rol_id=None) -> dict:
+        usuarios = self.repo.get_all(skip=skip, limit=limit,
+                                     activo=activo, rol_id=rol_id)
+        return {
+            "status": "success",
+            "data": [self._fmt(u) for u in usuarios],
+            "pagination": {"skip": skip, "limit": limit,
+                           "total": len(usuarios)},
+            "timestamp": _ts(),
+        }
 
-def get_usuario_by_id(db: Session, usuario_id: int):
-    """Obtiene un usuario por ID, lanza 404 si no existe."""
-    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    return usuario
+    def listar_roles(self) -> dict:
+        roles = self.roles.get_all()
+        return {
+            "status": "success",
+            "data": [{"idRol": r.idRol, "nombreRol": r.nombreRol,
+                      "descripcion": r.descripcion} for r in roles],
+            "timestamp": _ts(),
+        }
 
-def get_usuarios(db: Session, skip: int = 0, limit: int = 100):
-    """Lista usuarios con paginación."""
-    return db.query(Usuario).offset(skip).limit(limit).all()
+    def obtener_usuario(self, usuario_id: int) -> dict:
+        u = self.repo.get_by_id(usuario_id)
+        if not u:
+            not_found_response("ERR_USUARIO_NO_ENCONTRADO",
+                               f"Usuario {usuario_id} no encontrado.")
+        return {"status": "success", "data": self._fmt(u), "timestamp": _ts()}
 
-def create_usuario(db: Session, usuario_data: UsuarioCreate):
-    """
-    Crea un nuevo usuario.
-    Valida que email y cédula no existan, asigna rol por defecto 'cliente' si no se especifica.
-    """
-    # Verificar si ya existe un usuario con el mismo email
-    if get_usuario_by_email(db, usuario_data.email):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="El email ya está registrado"
-        )
-    # Verificar si ya existe un usuario con la misma cédula
-    if get_usuario_by_cedula(db, usuario_data.cedula):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="La cédula ya está registrada"
-        )
-    
-    # Obtener el rol (por defecto "cliente")
-    rol_nombre = usuario_data.rol_nombre or "cliente"
-    rol = db.query(Rol).filter(Rol.nombre == rol_nombre).first()
-    if not rol:
-        # Si el rol no existe, crearlo? Mejor lanzar error
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El rol '{rol_nombre}' no existe"
-        )
-    
-    # Crear el usuario
-    hashed = hash_password(usuario_data.password)
-    nuevo_usuario = Usuario(
-        nombre=usuario_data.nombre,
-        apellido=usuario_data.apellido,
-        email=usuario_data.email,
-        cedula=usuario_data.cedula,
-        password_hash=hashed,
-        rol_id=rol.id,
-        activo=True
-    )
-    db.add(nuevo_usuario)
-    db.commit()
-    db.refresh(nuevo_usuario)
-    return nuevo_usuario
-
-def update_usuario(db: Session, usuario_id: int, usuario_data: UsuarioUpdate):
-    """Actualiza un usuario existente (solo campos permitidos)."""
-    usuario = get_usuario_by_id(db, usuario_id)
-    update_dict = usuario_data.dict(exclude_unset=True)
-    
-    # Si se actualiza la contraseña, hashearla
-    if "password" in update_dict and update_dict["password"] is not None:
-        update_dict["password_hash"] = hash_password(update_dict.pop("password"))
-    
-    # Si se actualiza el rol, obtener el ID del rol
-    if "rol_nombre" in update_dict and update_dict["rol_nombre"] is not None:
-        rol = db.query(Rol).filter(Rol.nombre == update_dict["rol_nombre"]).first()
+    def crear_usuario(self, data: UsuarioCreate) -> dict:
+        if self.repo.get_by_email(data.email):
+            conflict_response("ERR_EMAIL_DUPLICADO",
+                              f"El email '{data.email}' ya existe.")
+        if self.repo.get_by_username(data.nombreUsuario):
+            conflict_response("ERR_USERNAME_DUPLICADO",
+                              f"El usuario '{data.nombreUsuario}' ya existe.")
+        rol = self.roles.get_by_id(data.rol_id)
         if not rol:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"El rol '{update_dict['rol_nombre']}' no existe"
-            )
-        update_dict["rol_id"] = rol.id
-        del update_dict["rol_nombre"]
-    
-    # Aplicar cambios
-    for field, value in update_dict.items():
-        setattr(usuario, field, value)
-    
-    db.commit()
-    db.refresh(usuario)
-    return usuario
+            not_found_response("ERR_ROL_NO_ENCONTRADO",
+                               f"Rol ID {data.rol_id} no existe.")
+        u = self.repo.create(
+            nombreUsuario = data.nombreUsuario,
+            email         = data.email,
+            password_hash = hash_password(data.password),
+            rol_id        = data.rol_id,
+        )
+        return {"status": "success", "mensaje": "Usuario creado.",
+                "data": self._fmt(u), "timestamp": _ts()}
 
-def delete_usuario(db: Session, usuario_id: int):
-    """Elimina físicamente un usuario (o lógicamente si se prefiere)."""
-    usuario = get_usuario_by_id(db, usuario_id)
-    db.delete(usuario)
-    db.commit()
-    return {"mensaje": "Usuario eliminado correctamente"}
+    def actualizar_usuario(self, usuario_id: int,
+                           data: UsuarioUpdate,
+                           current_user_id: int) -> dict:
+        u = self.repo.get_by_id(usuario_id)
+        if not u:
+            not_found_response("ERR_USUARIO_NO_ENCONTRADO",
+                               f"Usuario {usuario_id} no encontrado.")
+        campos = data.model_dump(exclude_none=True)
+        if "email" in campos:
+            ex = self.repo.get_by_email(campos["email"])
+            if ex and ex.idUsuarios != usuario_id:
+                conflict_response("ERR_EMAIL_DUPLICADO",
+                                  f"Email '{campos['email']}' ya en uso.")
+        if "nombreUsuario" in campos:
+            ex = self.repo.get_by_username(campos["nombreUsuario"])
+            if ex and ex.idUsuarios != usuario_id:
+                conflict_response("ERR_USERNAME_DUPLICADO",
+                                  f"Usuario '{campos['nombreUsuario']}' ya existe.")
+        actualizado = self.repo.update(usuario_id, campos)
+        return {"status": "success", "mensaje": "Usuario actualizado.",
+                "data": self._fmt(actualizado), "timestamp": _ts()}
 
-def soft_delete_usuario(db: Session, usuario_id: int):
-    """Desactiva un usuario (borrado lógico) manteniendo el registro."""
-    usuario = get_usuario_by_id(db, usuario_id)
-    usuario.activo = False
-    db.commit()
-    db.refresh(usuario)
-    return usuario
+    def desactivar_usuario(self, usuario_id: int,
+                           current_user_id: int) -> dict:
+        if usuario_id == current_user_id:
+            bad_request_response("ERR_NO_SELF_DELETE",
+                                 "No puedes desactivar tu propia cuenta.")
+        u = self.repo.get_by_id(usuario_id)
+        if not u:
+            not_found_response("ERR_USUARIO_NO_ENCONTRADO",
+                               f"Usuario {usuario_id} no encontrado.")
+        self.repo.desactivar(usuario_id)
+        return {"status": "success",
+                "mensaje": f"Usuario '{u.nombreUsuario}' desactivado.",
+                "timestamp": _ts()}
 
-def authenticate_usuario(db: Session, email: str, password: str):
-    """
-    Autentica un usuario por email y contraseña.
-    Retorna el usuario si las credenciales son correctas, None si no.
-    """
-    usuario = get_usuario_by_email(db, email)
-    if not usuario:
-        return None
-    if not verify_password(password, usuario.password_hash):
-        return None
-    if not usuario.activo:
-        return None
-    return usuario
+    def activar_usuario(self, usuario_id: int) -> dict:
+        u = self.repo.get_by_id(usuario_id)
+        if not u:
+            not_found_response("ERR_USUARIO_NO_ENCONTRADO",
+                               f"Usuario {usuario_id} no encontrado.")
+        self.repo.activar(usuario_id)
+        return {"status": "success",
+                "mensaje": f"Usuario '{u.nombreUsuario}' activado.",
+                "timestamp": _ts()}
+
+    def _fmt(self, u) -> dict:
+        return {
+            "idUsuarios":    u.idUsuarios,
+            "nombreUsuario": u.nombreUsuario,
+            "email":         u.email,
+            "rol":           u.rol.nombreRol if u.rol else None,
+            "rol_id":        u.rol_id,
+            "activo":        u.activo,
+            "created_at":    u.created_at.isoformat(),
+        }

@@ -1,13 +1,16 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from app.models.base import Base
+from sqlalchemy import Column, Integer, String, Text
+from sqlalchemy.orm import relationship
+from app.api.models.base import Base, TimestampMixin
 
-class Rol(Base):
+
+class Rol(Base, TimestampMixin):
     __tablename__ = "roles"
-    
-    idRol = Column(Integer, primary_key=True, autoincrement=True)
-    nombreRol = Column(String(50), unique=True, nullable=False)
+
+    idRol       = Column(Integer, primary_key=True, autoincrement=True)
+    nombreRol   = Column(String(50), unique=True, nullable=False)
     descripcion = Column(Text, nullable=True)
-    created_at = Column(DateTime, nullable=False)
-    
+
+    usuarios = relationship("Usuario", back_populates="rol")
+
     def __repr__(self):
         return f"<Rol {self.nombreRol}>"
