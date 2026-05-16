@@ -171,7 +171,6 @@ class MaquinaService:
                 }
             )
         
-        
         maquina_actualizada = self.repo.update(id, estado=nuevoEstado)
         
         return {
@@ -180,8 +179,8 @@ class MaquinaService:
             "data": {
                 "id": maquina_actualizada.id,
                 "nombre": maquina_actualizada.nombre,
-                "estado_anterior": maquina_existente.estado,
-                "estado_nuevo": nuevoEstado,
+                "estadoAnterior": maquina_existente.estado,
+                "estadoNuevo": nuevoEstado,
                 "updated_at": maquina_actualizada.updated_at.isoformat() if maquina_actualizada.updated_at else None
             }
         }

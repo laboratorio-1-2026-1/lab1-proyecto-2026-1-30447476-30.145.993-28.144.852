@@ -1,25 +1,39 @@
 from fastapi import FastAPI
-from app.api.database.session import engine, Base
-
-from app.api.v1.endpoints.maquinas import router as maquinas_router
-from app.api.v1.endpoints.categoriasMaquinas import router as categoriasMaquinas_router
-from app.api.v1.endpoints.ticketsMantenimiento import router as ticketsMantenimiento_router
-from app.api.v1.endpoints.productos import router as productos_router
-from app.api.v1.endpoints.ventas import router as ventas_router
-from app.api.v1.endpoints.categoriaProducto import router as categoriaProducto_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.api.core.config import settings
+from app.api.database.session import engine, Base, create_tables
+from app.api.v1.routers import api_router
 
 # Crear tablas en la base de datos
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SmartGym API")
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    description="SmartGym API — Laboratorio I 2026-1",
+    docs_url="/docs",
+)
 
-app.include_router(maquinas_router, prefix="/api/v1")
-app.include_router(categoriasMaquinas_router, prefix="/api/v1")
-app.include_router(ticketsMantenimiento_router, prefix="/api/v1")
-app.include_router(productos_router, prefix="/api/v1")
-app.include_router(ventas_router, prefix="/api/v1")
-app.include_router(categoriaProducto_router, prefix="/api/v1")
+# Configuración CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/")
-def root():
-    return {"mensaje": "API funcionando correctamente"} 
+# Incluir routers 
+app.include_router(api_router, prefix=settings.API_V1_STR)
+
+
+@app.on_event("startup")
+async def startup():
+    create_tables()
+    print(f"✅ {settings.PROJECT_NAME} iniciado")
+    print("📚 Docs: http://localhost:8000/docs")
+
+
+@app.get("/", tags=["Health"])
+async def root():
+    return {"status": "ok", "docs": "/docs"}

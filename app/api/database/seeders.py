@@ -1,53 +1,24 @@
-"""
-app/api/database/seeders.py
-============================
-Datos iniciales y de prueba para SmartGym API.
-
-Módulos cubiertos:
-  - Roles y usuarios (Mercedes)
-  - Categorías de máquinas y máquinas (Michelle)
-  - Categorías de productos y productos de tienda (Michelle)
-  - Planes de membresía (Karlianny)
-  - Sesiones de entrenamiento (Karlianny)
-  - Pagos de membresía (Karlianny)
-
-Uso:
-  python -m app.api.database.seeders
-"""
-
 from datetime import date, datetime, timedelta
 from app.api.database.session import SessionLocal, create_tables
 from app.api.core.security import hash_password
-
-# ── Modelos ────────────────────────────────────────────────────────────────
 from app.api.models.rol import Rol
 from app.api.models.usuario import Usuario
-
-# Modelos de Michelle
 from app.api.models.categoriasMaquinas import CategoriasMaquinas
 from app.api.models.maquina import Maquina, EstadoMaquina
 from app.api.models.categoriaProducto import CategoriaProducto
 from app.api.models.producto import ProductoTienda
-
-# Modelos de Karlianny
 from app.api.models.plan import Plan
 from app.api.models.sesion import Sesion
 from app.api.models.pago import Pago
 
 
-# ═══════════════════════════════════════════════════════════════════════════
-#  DATOS SEMILLA
-# ═══════════════════════════════════════════════════════════════════════════
-
-# ── Roles ──────────────────────────────────────────────────────────────────
 ROLES = [
     {"nombreRol": "Administrador", "descripcion": "Control total del sistema"},
     {"nombreRol": "Finanzas",      "descripcion": "Gestión de pagos y ventas"},
     {"nombreRol": "Entrenador",    "descripcion": "Gestión de clases y evaluaciones"},
     {"nombreRol": "Cliente",       "descripcion": "Acceso básico al gimnasio"},
 ]
-
-# ── Usuarios ───────────────────────────────────────────────────────────────
+  
 USUARIOS = [
     {
         "nombreUsuario": "admin",
@@ -93,7 +64,6 @@ USUARIOS = [
     },
 ]
 
-# ── Categorías de máquinas ─────────────────────────────────────────────────
 CATEGORIAS_MAQUINAS = [
     {"nombre": "Cardio",           "descripcion": "Equipos para ejercicio cardiovascular"},
     {"nombre": "Fuerza libre",     "descripcion": "Mancuernas, barras y discos"},
@@ -102,8 +72,7 @@ CATEGORIAS_MAQUINAS = [
     {"nombre": "Estiramiento",     "descripcion": "Equipos de movilidad y recuperación"},
 ]
 
-# ── Máquinas ───────────────────────────────────────────────────────────────
-# Se completan con el id de categoría después de crearlas
+
 MAQUINAS = [
     # Cardio
     {
@@ -199,7 +168,6 @@ MAQUINAS = [
     },
 ]
 
-# ── Categorías de productos ────────────────────────────────────────────────
 CATEGORIAS_PRODUCTOS = [
     {"nombre": "Suplementos",    "descripcion": "Proteínas, creatinas, aminoácidos y vitaminas"},
     {"nombre": "Bebidas",        "descripcion": "Hidratación y bebidas energéticas"},
@@ -312,7 +280,6 @@ PRODUCTOS = [
     },
 ]
 
-# ── Planes de membresía ────────────────────────────────────────────────────
 PLANES = [
     {
         "nombre":        "Plan Básico",
@@ -336,7 +303,6 @@ PLANES = [
     },
 ]
 
-# ── Sesiones de entrenamiento ──────────────────────────────────────────────
 # Se crean con referencia al entrenador después de crear usuarios
 HOY = date.today()
 

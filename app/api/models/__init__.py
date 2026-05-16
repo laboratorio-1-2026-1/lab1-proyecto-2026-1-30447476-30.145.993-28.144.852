@@ -6,3 +6,5 @@ from .ticketsMantenimiento import TicketsMantenimiento
 from .producto import ProductoTienda
 from .ventaDetalle import VentaDetalle
 from .venta import Venta
+from app.api.models.rol import Rol
+from app.api.models.usuario import Usuario
