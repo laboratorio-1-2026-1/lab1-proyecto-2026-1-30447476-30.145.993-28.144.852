@@ -14,5 +14,5 @@ class VentaDetalle(Base, TimestampMixin):
     
 
     # Relaciones
-    venta = relationship("Venta", back_populates="detalles")
-    producto = relationship("ProductoTienda", back_populates="detalles")
+    venta = relationship("Venta", back_populates="ventaDetalles")
+    producto = relationship("ProductoTienda", back_populates="ventaDetalles")

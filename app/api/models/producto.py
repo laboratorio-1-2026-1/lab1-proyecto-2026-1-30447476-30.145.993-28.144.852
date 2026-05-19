@@ -9,7 +9,7 @@ class ProductoTienda(Base, TimestampMixin):
     idProductosTienda = Column(Integer, primary_key=True, index=True)  
     nombre = Column(String(100), nullable=False, index=True)
     descripcion = Column(String(500), nullable=True)    # text
-    categoriaProducto_id = Column(Integer, ForeignKey("categoriaProducto.id"), nullable=False)
+    categoriaProducto_id = Column(Integer, ForeignKey("categoriaProducto.idCategoriaProducto"), nullable=False)
     precio = Column(Float, nullable=False)              
     stock = Column(Integer, default=0, nullable=False)
     codigoBarra = Column(String(50), unique=True, nullable=True)  

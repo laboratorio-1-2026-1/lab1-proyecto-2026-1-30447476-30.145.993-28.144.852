@@ -20,9 +20,9 @@ class Venta(Base, TimestampMixin):
     metodoPago = Column(String(50))
     estado = Column(Enum(EstadoVenta), default=EstadoVenta.COMPLETADA)
    
-    # Relación con cliente
-    cliente_id = Column(Integer, ForeignKey("clientes.id"), nullable=True)
-    cliente = relationship("Cliente", back_populates="ventas") 
+    # Relación con cliente (usuario del sistema)
+    cliente_id = Column(Integer, ForeignKey("usuarios.idUsuarios"), nullable=True)
+    cliente = relationship("Usuario", backref="ventas") 
 
     # Relación con los detalles de venta
     ventaDetalles = relationship(
