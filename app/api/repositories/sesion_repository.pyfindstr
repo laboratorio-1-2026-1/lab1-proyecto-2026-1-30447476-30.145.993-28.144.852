@@ -1,0 +1,1 @@
+        return db.query(Sesion).filter(Sesion.id == sesion_id).first()  /s "repositories" app\api\schemas\*.py

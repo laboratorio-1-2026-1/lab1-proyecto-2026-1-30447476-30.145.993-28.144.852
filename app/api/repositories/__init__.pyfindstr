@@ -1,0 +1,1 @@
+from app.api.repositories.usuario_repository import UsuarioRepository  /s "self._get_db" app\api\repositories\*.py
