@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from app.api.database.session import SessionLocal, create_tables
 from app.api.core.security import hash_password
 from app.api.models.rol import Rol
@@ -527,12 +527,14 @@ def seed_sesiones(db, usuarios: dict):
             Sesion.entrenador_id == entrenador.idUsuarios,
         ).first()
         if not existente:
+            hora_inicio = datetime.strptime(s["hora_inicio"], "%H:%M").time()
+            hora_fin = datetime.strptime(s["hora_fin"], "%H:%M").time()
             sesion = Sesion(
                 disciplina=s["disciplina"],
                 entrenador_id=entrenador.idUsuarios,
                 fecha=s["fecha"],
-                hora_inicio=s["hora_inicio"],
-                hora_fin=s["hora_fin"],
+                hora_inicio=hora_inicio,
+                hora_fin=hora_fin,
                 cupo_maximo=s["cupo_maximo"],
                 cupos_disponibles=s["cupo_maximo"],
             )

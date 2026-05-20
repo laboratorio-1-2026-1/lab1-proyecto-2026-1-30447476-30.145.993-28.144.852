@@ -5,8 +5,9 @@ class EvaluacionService:
     def __init__(self): 
         self.evaluacion_repo = EvaluacionRepository() 
  
-    def registrar_evaluacion(self, cliente_id: int, entrenador_id: int, peso: float, estatura: float, grasa_corporal: float = None, observaciones: str = None): 
+    def registrar_evaluacion(self, db, cliente_id: int, entrenador_id: int, peso: float, estatura: float, grasa_corporal: float = None, observaciones: str = None): 
         return self.evaluacion_repo.create( 
+            db=db,
             cliente_id=cliente_id, 
             entrenador_id=entrenador_id, 
             peso=peso, 
@@ -16,5 +17,5 @@ class EvaluacionService:
             fecha=datetime.now() 
         ) 
  
-    def obtener_historial_cliente(self, cliente_id: int): 
-        return self.evaluacion_repo.get_by_cliente(cliente_id) 
+    def obtener_historial_cliente(self, db, cliente_id: int): 
+        return self.evaluacion_repo.get_by_cliente(db, cliente_id) 

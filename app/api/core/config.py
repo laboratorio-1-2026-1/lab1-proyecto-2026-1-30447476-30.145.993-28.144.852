@@ -9,7 +9,7 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://postgres:password@localhost:5432/smartgym_db"
+        "sqlite:///./smartgym.db"
     )
     SECRET_KEY:   str = os.getenv(
         "SECRET_KEY",

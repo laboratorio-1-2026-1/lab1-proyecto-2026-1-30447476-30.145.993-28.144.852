@@ -23,7 +23,7 @@ router = APIRouter(prefix="/tienda", tags=["Tienda (POS)"])
 def registrar_venta(
     data: VentaCreate,
     db: Session = Depends(get_db),
-    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
+    current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
     if not data.items:
         return bad_request_response(
@@ -61,7 +61,7 @@ def registrar_venta(
 
     return VentaRepository.create(
         db,
-        usuario_id=current_user.idUsuarios,
+        usuario_id=current_user["user_id"],
         items=items_dict,
         cliente_id=data.cliente_id,
         metodoPago=data.metodoPago,
@@ -75,7 +75,7 @@ def registrar_venta(
 )
 def listar_ventas(
     db: Session = Depends(get_db),
-    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
+    current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
     return VentaRepository.get_all(db)
 
@@ -88,7 +88,7 @@ def listar_ventas(
 def obtener_venta(
     venta_id: int,
     db: Session = Depends(get_db),
-    curret_user: dict=Depends(require_roles("Administrador", "Finanzas")),
+    current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
     venta = VentaRepository.get_by_id(db, venta_id)
     if not venta:

@@ -14,6 +14,7 @@ class Usuario(Base, TimestampMixin):
     rol_id        = Column(Integer, ForeignKey("roles.idRol"), nullable=False)
 
     rol = relationship("Rol", back_populates="usuarios")
+    tickets = relationship("TicketsMantenimiento", back_populates="usuario")
 
     def __repr__(self):
         return f"<Usuario {self.email}>"
