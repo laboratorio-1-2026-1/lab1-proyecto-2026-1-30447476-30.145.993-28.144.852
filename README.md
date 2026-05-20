@@ -71,8 +71,12 @@ cd lab1-proyecto-2026-1-30447476--30.145.993-28.144.852
 ### 2. Crear entorno virtual
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Linux/Mac
-.venv\Scripts\activate           # Windows
+# Linux/Mac
+source .venv/bin/activate
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+# Windows CMD
+.venv\Scripts\activate.bat
 ```
 
 ### 3. Instalar dependencias
@@ -80,21 +84,65 @@ source .venv/bin/activate        # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### 4. Configurar variables de entorno
-```bash
-cp .env.example .env
-# Edita el archivo .env con tus credenciales de base de datos
+### 4. Configurar la base de datos
+El proyecto puede usar SQLite por defecto con `sqlite:///./smartgym.db`.
+Si deseas conectar PostgreSQL, define `DATABASE_URL` en el entorno o en un archivo `.env`.
+
+Ejemplo de variable de entorno (PowerShell):
+```powershell
+$env:DATABASE_URL = 'postgresql://postgres:password@localhost:5432/smartgym_db'
 ```
 
-### 5. Ejecutar con Docker
+### 5. Poblar la base de datos con datos de prueba
+Ejecuta el seeder para crear roles, usuarios, máquinas, productos, planes y datos de prueba.
+
 ```bash
-docker-compose up --build
+python -m app.api.database.seeders
 ```
 
-### 6. Ejecutar localmente
+Al ejecutar el seeder se crearán usuarios iniciales, incluyendo:
+
+- `admin@smartgym.com` / `Admin2026!`  — Administrador
+- `finanzas@smartgym.com` / `Finanzas2026!`  — Finanzas
+- `carlos@smartgym.com` / `Entrenador2026!`  — Entrenador
+- `laura@smartgym.com` / `Entrenador2026!`  — Entrenador
+- `maria@gmail.com` / `Cliente2026!`  — Cliente
+- `pedro@gmail.com` / `Cliente2026!`  — Cliente
+- `ana@gmail.com` / `Cliente2026!`  — Cliente
+
+### 6. Ejecutar localmente con Uvicorn
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
+
+### 7. Probar endpoints desde Swagger
+1. Abre Swagger UI en: `http://127.0.0.1:8000/docs`
+2. Usa el botón `Try it out` en `/api/v1/auth/login`.
+3. Envía el cuerpo JSON con credenciales, por ejemplo:
+```json
+{
+  "email": "admin@smartgym.com",
+  "password": "Admin2026!"
+}
+```
+4. Copia el valor de `token` de la respuesta.
+5. Haz clic en el botón `Authorize` en Swagger e ingresa:
+```
+Bearer <token>
+```
+6. Ahora puedes probar cualquier endpoint protegido, por ejemplo:
+   - `/api/v1/auth/me`
+   - `/api/v1/pagos`
+   - `/api/v1/reservas`
+   - `/api/v1/usuarios`
+
+### 8. Secuencia recomendada de pruebas
+1. Crear un usuario nuevo con `/api/v1/auth/register` (opcional).
+2. Iniciar sesión con `/api/v1/auth/login`.
+3. Usar el token devuelto para autorizar requests protegidos.
+4. Probar un endpoint protegido, por ejemplo `/api/v1/auth/me`.
+
+> Nota: también puedes ejecutar las mismas llamadas con `curl` si prefieres no usar Swagger.
 
 ---
 
