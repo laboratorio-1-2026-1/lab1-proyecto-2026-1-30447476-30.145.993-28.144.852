@@ -16,5 +16,10 @@ class ClienteRepository:
     def get_by_email(db: Session, email: str) -> Optional[Usuario]:
         return db.query(Usuario).filter(Usuario.email == email).first()
 
+    @staticmethod
+    def get_by_cedula(db: Session, cedula: str) -> Optional[Usuario]:
+        """Busca un cliente por su número de cédula (usado en control de acceso)."""
+        return db.query(Usuario).filter(Usuario.cedula == cedula).first()
+
 
 cliente_repository = ClienteRepository()

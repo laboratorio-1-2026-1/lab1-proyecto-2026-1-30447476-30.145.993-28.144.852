@@ -23,6 +23,11 @@ class UsuarioRepository:
             Usuario.nombreUsuario == username
         ).first()
 
+    def get_by_cedula(self, cedula: str) -> Optional[Usuario]:
+        return self.db.query(Usuario).filter(
+            Usuario.cedula == cedula
+        ).first()
+
     def get_all(self, skip=0, limit=100,
                 activo=None, rol_id=None) -> List[Usuario]:
         q = self.db.query(Usuario)
@@ -33,13 +38,15 @@ class UsuarioRepository:
         return q.offset(skip).limit(limit).all()
 
     def create(self, nombreUsuario: str, email: str,
-               password_hash: str, rol_id: int) -> Usuario:
+               password_hash: str, rol_id: int,
+               cedula: Optional[str] = None) -> Usuario:
         u = Usuario(
             nombreUsuario = nombreUsuario,
             email         = email,
             password_hash = password_hash,
             rol_id        = rol_id,
             activo        = True,
+            cedula        = cedula,
         )
         self.db.add(u)
         self.db.flush()
