@@ -17,10 +17,16 @@ router = APIRouter(prefix="/categorias-maquinas", tags=["Máquinas e Instalacion
     summary="Listar categorías de máquinas",
 )
 def listar_categorias(
+    skip: int = 0,               
+    limit: int = 100,            
     db: Session = Depends(get_db),
-    current_user: dict =Depends(require_roles("Administrador", "Entrenador")),
+    current_user: dict = Depends(require_roles("Administrador", "Entrenador")),
 ):
-    return MaquinaRepository.get_all_categorias(db)
+    return MaquinaRepository.get_all_categorias(
+        db,
+        skip=skip,              
+        limit=limit               
+    )
 
 
 @router.post(
@@ -32,6 +38,6 @@ def listar_categorias(
 def crear_categoria(
     data: CategoriaMaquinaCreate,
     db: Session = Depends(get_db),
-    current_user: dict =Depends(require_roles("Administrador")),
+    current_user: dict = Depends(require_roles("Administrador")),
 ):
     return MaquinaRepository.create_categoria(db, data.nombre, data.descripcion)

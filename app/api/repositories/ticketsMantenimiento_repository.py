@@ -9,10 +9,14 @@ from app.api.models.maquina import Maquina
 class TicketsMantenimientoRepository:
 
     @staticmethod
-    def get_all(db: Session) -> List[TicketsMantenimiento]:
+    def get_all(
+        db: Session,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[TicketsMantenimiento]:
         return db.query(TicketsMantenimiento).order_by(
             TicketsMantenimiento.fechaReporte.desc()
-        ).all()
+        ).offset(skip).limit(limit).all()  
 
     @staticmethod
     def get_by_id(db: Session, ticket_id: int) -> Optional[TicketsMantenimiento]:
@@ -21,16 +25,25 @@ class TicketsMantenimientoRepository:
         ).first()
 
     @staticmethod
-    def get_by_maquina(db: Session, maquina_id: int) -> List[TicketsMantenimiento]:
+    def get_by_maquina(
+        db: Session,
+        maquina_id: int,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[TicketsMantenimiento]:
         return db.query(TicketsMantenimiento).filter(
             TicketsMantenimiento.maquina_id == maquina_id
-        ).order_by(TicketsMantenimiento.fechaReporte.desc()).all()
+        ).order_by(TicketsMantenimiento.fechaReporte.desc()).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
-    def get_abiertos(db: Session) -> List[TicketsMantenimiento]:
+    def get_abiertos(
+        db: Session,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[TicketsMantenimiento]:
         return db.query(TicketsMantenimiento).filter(
             TicketsMantenimiento.estado == "Abierto"
-        ).order_by(TicketsMantenimiento.fechaReporte.desc()).all()
+        ).order_by(TicketsMantenimiento.fechaReporte.desc()).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
     def create(
@@ -90,4 +103,4 @@ class TicketsMantenimientoRepository:
         return db.query(TicketsMantenimiento).filter(
             TicketsMantenimiento.maquina_id == maquina_id,
             TicketsMantenimiento.estado == "Abierto",
-        ).first() is not None 
+        ).first() is not None

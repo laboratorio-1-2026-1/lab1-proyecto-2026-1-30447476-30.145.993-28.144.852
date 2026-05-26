@@ -8,8 +8,15 @@ from app.api.schemas.producto import ProductoCreate
 class CategoriaProductoRepository:
 
     @staticmethod
-    def get_all(db: Session) -> List[CategoriaProducto]:
-        return db.query(CategoriaProducto).order_by(CategoriaProducto.idCategoriasProductos).all()
+    def get_all(
+        db: Session,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[CategoriaProducto]:
+        # Nota: se usa idCategoriaProducto como columna de ordenación (consistente con get_by_id)
+        return db.query(CategoriaProducto).order_by(
+            CategoriaProducto.idCategoriaProducto
+        ).offset(skip).limit(limit).all()  
 
     @staticmethod
     def get_by_id(db: Session, categoria_id: int) -> Optional[CategoriaProducto]:
@@ -53,4 +60,4 @@ class CategoriaProductoRepository:
             return False
         db.delete(categoria)
         db.commit()
-        return True 
+        return True

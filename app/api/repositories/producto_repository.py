@@ -11,13 +11,15 @@ class ProductoRepository:
         db: Session,
         solo_activos: bool = True,
         categoria_id: Optional[int] = None,
+        skip: int = 0,               
+        limit: int = 100,            
     ) -> List[ProductoTienda]:
         q = db.query(ProductoTienda)
         if solo_activos:
             q = q.filter(ProductoTienda.activo == True)
         if categoria_id is not None:
             q = q.filter(ProductoTienda.categoriaProducto_id == categoria_id)
-        return q.order_by(ProductoTienda.nombre).all()
+        return q.order_by(ProductoTienda.nombre).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
     def get_by_id(db: Session, producto_id: int) -> Optional[ProductoTienda]:
@@ -63,7 +65,7 @@ class ProductoRepository:
         if not producto:
             return None
         if producto.stock < cantidad:
-            return None  # stock insuficiente — el servicio lanza el 409
+            return None  # stock insuficiente — el servicio lanza el codigo 409
         producto.stock -= cantidad
         db.commit()
         db.refresh(producto)
@@ -84,4 +86,4 @@ class ProductoRepository:
         producto = ProductoRepository.get_by_id(db, producto_id)
         if not producto or not producto.activo:
             return False
-        return producto.stock >= cantidad 
+        return producto.stock >= cantidad

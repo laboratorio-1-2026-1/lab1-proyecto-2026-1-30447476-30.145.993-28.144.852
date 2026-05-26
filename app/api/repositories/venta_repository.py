@@ -9,8 +9,12 @@ from app.api.models.producto import ProductoTienda
 class VentaRepository:
 
     @staticmethod
-    def get_all(db: Session) -> List[Venta]:
-        return db.query(Venta).order_by(Venta.fechaVenta.desc()).all()
+    def get_all(
+        db: Session,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[Venta]:
+        return db.query(Venta).order_by(Venta.fechaVenta.desc()).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
     def get_by_id(db: Session, venta_id: int) -> Optional[Venta]:
@@ -19,10 +23,15 @@ class VentaRepository:
         ).first()
 
     @staticmethod
-    def get_by_cliente(db: Session, cliente_id: int) -> List[Venta]:
+    def get_by_cliente(
+        db: Session,
+        cliente_id: int,
+        skip: int = 0,               
+        limit: int = 100,            
+    ) -> List[Venta]:
         return db.query(Venta).filter(
             Venta.cliente_id == cliente_id
-        ).order_by(Venta.fechaVenta.desc()).all()
+        ).order_by(Venta.fechaVenta.desc()).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
     def create(
@@ -85,4 +94,4 @@ class VentaRepository:
     def get_detalles(db: Session, venta_id: int) -> List[VentaDetalle]:
         return db.query(VentaDetalle).filter(
             VentaDetalle.venta_id == venta_id
-        ).all() 
+        ).all()

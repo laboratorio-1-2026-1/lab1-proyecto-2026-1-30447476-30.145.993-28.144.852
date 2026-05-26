@@ -24,6 +24,8 @@ ESTADOS_VALIDOS = ["Activa", "En Mantenimiento", "Fuera de Servicio"]
 def listar_maquinas(
     categoria_id: Optional[int] = None,
     estado: Optional[str] = None,
+    skip: int = 0,               
+    limit: int = 100,           
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Entrenador")),
 ):
@@ -32,7 +34,13 @@ def listar_maquinas(
             mensaje=f"Estado inválido. Valores permitidos: {ESTADOS_VALIDOS}",
             codigo_interno="ERR_ESTADO_INVALIDO"
         )
-    return MaquinaRepository.get_all(db, categoria_id=categoria_id, estado=estado)
+    return MaquinaRepository.get_all(
+        db,
+        categoria_id=categoria_id,
+        estado=estado,
+        skip=skip,                
+        limit=limit               
+    )
 
 @router.post(
     "/",
@@ -49,7 +57,6 @@ def crear_maquina(
         raise HTTPException(status_code=404, detail="Categoría no encontrada")
     return MaquinaRepository.create(db, data)
 
-
 @router.get(
     "/{maquina_id}",
     response_model=MaquinaResponse,
@@ -64,8 +71,6 @@ def obtener_maquina(
     if not maquina:
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
     return maquina
-
-
 
 @router.put(
     "/{maquina_id}",
@@ -82,7 +87,6 @@ def actualizar_maquina(
     if not maquina:
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
     return maquina
-
 
 @router.patch(
     "/{maquina_id}/estado",

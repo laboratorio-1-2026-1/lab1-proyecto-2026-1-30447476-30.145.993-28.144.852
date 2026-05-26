@@ -13,7 +13,6 @@ from app.api.repositories.venta_repository import VentaRepository
 
 router = APIRouter(prefix="/tienda", tags=["Tienda (POS)"])
 
-
 @router.post(
     "/ventas",
     response_model=VentaResponse,
@@ -74,10 +73,16 @@ def registrar_venta(
     summary="Listar historial de ventas",
 )
 def listar_ventas(
+    skip: int = 0,               
+    limit: int = 100,            
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
-    return VentaRepository.get_all(db)
+    return VentaRepository.get_all(
+        db,
+        skip=skip,               
+        limit=limit               
+    )
 
 
 @router.get(
@@ -94,5 +99,3 @@ def obtener_venta(
     if not venta:
         raise HTTPException(status_code=404, detail="Venta no encontrada")
     return venta
-
-    

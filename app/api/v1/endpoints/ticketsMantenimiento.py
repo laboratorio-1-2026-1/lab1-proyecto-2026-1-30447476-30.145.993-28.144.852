@@ -22,12 +22,16 @@ router = APIRouter(prefix="/tickets-mantenimiento", tags=["Máquinas e Instalaci
 )
 def listar_tickets(
     maquina_id: int,
+    skip: int = 0,               
+    limit: int = 100,            
     db: Session = Depends(get_db),
-    current_user: dict =Depends(require_roles("Administrador")),
+    current_user: dict = Depends(require_roles("Administrador")),
 ):
     if not MaquinaRepository.get_by_id(db, maquina_id):
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
-    return TicketsMantenimientoRepository.get_by_maquina(db, maquina_id)
+    return TicketsMantenimientoRepository.get_by_maquina(
+        db, maquina_id, skip=skip, limit=limit   
+    )
 
 
 @router.post(
@@ -39,7 +43,7 @@ def listar_tickets(
 def abrir_ticket(
     data: TicketCreate,
     db: Session = Depends(get_db),
-    current_user: dict =Depends(require_roles("Administrador")),
+    current_user: dict = Depends(require_roles("Administrador")),
 ):
     if not MaquinaRepository.get_by_id(db, data.maquina_id):
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
@@ -69,7 +73,7 @@ def resolver_ticket(
     ticket_id: int,
     data: TicketResolve,
     db: Session = Depends(get_db),
-    curret_user: dict =Depends(require_roles("Administrador")),
+    current_user: dict = Depends(require_roles("Administrador")),   # ← typo corregido
 ):
     ticket = TicketsMantenimientoRepository.get_by_id(db, ticket_id)
     if not ticket:

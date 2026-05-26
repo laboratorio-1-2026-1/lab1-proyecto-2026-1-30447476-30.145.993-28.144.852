@@ -12,13 +12,15 @@ class MaquinaRepository:
         db: Session,
         categoria_id: Optional[int] = None,
         estado: Optional[str] = None,
+        skip: int = 0,               
+        limit: int = 100,            
     ) -> List[Maquina]:
         q = db.query(Maquina)
         if categoria_id is not None:
             q = q.filter(Maquina.categoria_id == categoria_id)
         if estado is not None:
             q = q.filter(Maquina.estadoOperativo == estado)
-        return q.order_by(Maquina.idMaquinas).all()
+        return q.order_by(Maquina.idMaquinas).offset(skip).limit(limit).all()  # ← PAGINACIÓN
 
     @staticmethod
     def get_by_id(db: Session, maquina_id: int) -> Optional[Maquina]:
@@ -75,8 +77,14 @@ class MaquinaRepository:
     # ── Categorías ────────────────────────────────────────────────────────────
 
     @staticmethod
-    def get_all_categorias(db: Session) -> List[CategoriasMaquinas]:
-        return db.query(CategoriasMaquinas).order_by(CategoriasMaquinas.idCategoriasMaquinas).all()
+    def get_all_categorias(
+        db: Session,
+        skip: int = 0,               
+        limit: int = 100,           
+    ) -> List[CategoriasMaquinas]:
+        return db.query(CategoriasMaquinas).order_by(
+            CategoriasMaquinas.idCategoriasMaquinas
+        ).offset(skip).limit(limit).all()  
 
     @staticmethod
     def get_categoria_by_id(db: Session, categoria_id: int) -> Optional[CategoriasMaquinas]:
@@ -92,4 +100,4 @@ class MaquinaRepository:
         db.add(categoria)
         db.commit()
         db.refresh(categoria)
-        return categoria 
+        return categoria

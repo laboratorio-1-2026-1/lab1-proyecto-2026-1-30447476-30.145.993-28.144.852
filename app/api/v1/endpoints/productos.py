@@ -20,10 +20,18 @@ router = APIRouter(prefix="/tienda/productos", tags=["Tienda (POS)"])
 def listar_productos(
     categoria_id: Optional[int] = None,
     solo_activos: bool = True,
+    skip: int = 0,               
+    limit: int = 100,            
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Finanzas", "Entrenador")),
 ):
-    return ProductoRepository.get_all(db, solo_activos=solo_activos, categoria_id=categoria_id)
+    return ProductoRepository.get_all(
+        db,
+        solo_activos=solo_activos,
+        categoria_id=categoria_id,
+        skip=skip,                
+        limit=limit               
+    )
 
 @router.post("/productos", response_model=ProductoResponse, status_code=status.HTTP_201_CREATED)
 def crear_producto(
