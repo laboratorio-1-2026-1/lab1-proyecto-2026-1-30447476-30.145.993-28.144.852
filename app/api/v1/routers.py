@@ -13,7 +13,11 @@ from app.api.v1.endpoints.accesos import router as accesos_router
 from app.api.v1.endpoints.planes import router as planes_router
 from app.api.v1.endpoints.pagos import router as pagos_router
 from app.api.v1.endpoints.evaluaciones import router as evaluaciones_router
-from app.api.v1.endpoints.finanzas import router as finanzas_router      # NUEVO
+from app.api.v1.endpoints.finanzas import router as finanzas_router      
+from app.api.v1.endpoints import router as clientes_router
+from app.api.v1.endpoints import router as entrenadores_router
+from app.api.v1.endpoints import routeras disciplinas_router
+
 
 router = APIRouter()
 
@@ -31,4 +35,7 @@ router.include_router(accesos_router,           prefix="/api/v1", tags=["Accesos
 router.include_router(planes_router,            prefix="/api/v1", tags=["Planes"])
 router.include_router(pagos_router,             prefix="/api/v1", tags=["Pagos"])
 router.include_router(evaluaciones_router,      prefix="/api/v1", tags=["Evaluaciones"])
-router.include_router(finanzas_router,          prefix="/api/v1", tags=["Finanzas"])   # NUEVO 
+router.include_router(finanzas_router,          prefix="/api/v1", tags=["Finanzas"])  
+router.include_router(clientes_router,          prefix="/api/v1", tags=["Clientes"])
+router.include_router(entrenadores_router,      prefix="/api/v1", tags=["Entrenadores"])
+router.include_router(disciplinas_router,       prefix="/api/v1", tags=["Disciplinas"])

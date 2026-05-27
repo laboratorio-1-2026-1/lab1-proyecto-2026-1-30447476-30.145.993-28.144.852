@@ -1,49 +1,55 @@
-from datetime import datetime
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from app.api.models.evaluacion import Evaluacion
-from app.api.schemas.evaluacion import EvaluacionCreate
-
+from app.api.models.evaluacion_biometrica import EvaluacionBiometrica
 
 class EvaluacionRepository:
-    @staticmethod
-    def get_all(db: Session) -> List[Evaluacion]:
-        return db.query(Evaluacion).order_by(Evaluacion.fecha.desc()).all()
 
     @staticmethod
-    def get_by_id(db: Session, evaluacion_id: int) -> Optional[Evaluacion]:
-        return db.query(Evaluacion).filter(Evaluacion.id == evaluacion_id).first()
-
-    @staticmethod
-    def get_by_cliente(db: Session, cliente_id: int) -> List[Evaluacion]:
-        return (
-            db.query(Evaluacion)
-            .filter(Evaluacion.cliente_id == cliente_id)
-            .order_by(Evaluacion.fecha.desc())
-            .all()
-        )
-
-    @staticmethod
-    def create(
+    def get_all(
         db: Session,
-        cliente_id: int,
-        entrenador_id: int,
-        peso: float,
-        estatura: float,
-        grasa_corporal: Optional[float],
-        observaciones: Optional[str],
-        fecha: datetime,
-    ) -> Evaluacion:
-        evaluacion = Evaluacion(
-            cliente_id=cliente_id,
-            entrenador_id=entrenador_id,
-            peso=peso,
-            estatura=estatura,
-            grasa_corporal=grasa_corporal,
-            observaciones=observaciones,
-            fecha=fecha,
-        )
+        skip: int = 0,
+        limit: int = 100,
+        cliente_id: Optional[int] = None,
+        entrenador_id: Optional[int] = None
+    ) -> List[EvaluacionBiometrica]:
+        query = db.query(EvaluacionBiometrica)
+        if cliente_id:
+            query = query.filter(EvaluacionBiometrica.cliente_id == cliente_id)
+        if entrenador_id:
+            query = query.filter(EvaluacionBiometrica.entrenador_id == entrenador_id)
+        return query.order_by(EvaluacionBiometrica.fechaEvaluacion.desc()).offset(skip).limit(limit).all()
+
+    @staticmethod
+    def get_by_id(db: Session, evaluacion_id: int) -> Optional[EvaluacionBiometrica]:
+        return db.query(EvaluacionBiometrica).filter(
+            EvaluacionBiometrica.idEvaluacionesBiometricas == evaluacion_id
+        ).first()
+
+    @staticmethod
+    def create(db: Session, **data) -> EvaluacionBiometrica:
+        evaluacion = EvaluacionBiometrica(**data)
         db.add(evaluacion)
         db.commit()
         db.refresh(evaluacion)
         return evaluacion
+
+    @staticmethod
+    def update(db: Session, evaluacion_id: int, **data) -> Optional[EvaluacionBiometrica]:
+        evaluacion = EvaluacionRepository.get_by_id(db, evaluacion_id)
+        if not evaluacion:
+            return None
+        for key, value in data.items():
+            if value is not None:
+                setattr(evaluacion, key, value)
+        db.commit()
+        db.refresh(evaluacion)
+        return evaluacion
+
+    @staticmethod
+    def delete(db: Session, evaluacion_id: int) -> bool:
+        evaluacion = EvaluacionRepository.get_by_id(db, evaluacion_id)
+        if not evaluacion:
+            return False
+        db.delete(evaluacion)
+        db.commit()
+        return True

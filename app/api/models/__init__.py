@@ -14,6 +14,9 @@ from .acceso import Acceso
 from .plan import Plan
 from .pago import Pago
 from .evaluacion import Evaluacion
+from .cliente import Cliente
+from .disciplina import Disciplina
+from .entrenador import Entrenador
 
 __all__ = [
     "Base",

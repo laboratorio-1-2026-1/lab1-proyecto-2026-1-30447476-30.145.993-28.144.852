@@ -20,3 +20,6 @@ from .acceso import AccesoCreate, AccesoResponse
 from .evaluacion import EvaluacionCreate, EvaluacionResponse
 from .plan import PlanCreate, PlanResponse
 from .pago import PagoCreate, PagoResponse
+from .cliente import ClienteCreate, ClienteUpdate, ClienteResponse
+from .entrenador import EntrenadorCreate, EntrenadorUpdate, EntrenadorResponse
+from .disciplina import DisciplinaCreate, DisciplinaUpdate, DisciplinaResponse

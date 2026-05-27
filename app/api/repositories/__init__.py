@@ -9,4 +9,6 @@ from .reserva_repository import ReservaRepository, reserva_repository
 from .sesion_repository import SesionRepository, sesion_repository
 from .acceso_repository import AccesoRepository, acceso_repository
 from .plan_repository import PlanRepository, plan_repository
-from .cliente_repository import ClienteRepository, cliente_repository
+from .cliente_repository import ClienteRepository
+from .entrenador_repository import EntrenadorRepository
+from .disciplina_repository import DisciplinaRepository

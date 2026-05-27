@@ -1,46 +1,55 @@
-from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
-
+from typing import Optional
 from app.api.database.session import get_db
-from app.api.core.security import require_roles
-from app.api.schemas.evaluacion import EvaluacionCreate, EvaluacionResponse
+from app.api.core.security import require_roles, get_current_user
 from app.api.services.evaluacion_service import EvaluacionService
+from app.api.schemas.evaluacion import EvaluacionCreate, EvaluacionUpdate
 
-router = APIRouter(tags=["Evaluaciones"])
+router = APIRouter(prefix="/evaluaciones", tags=["Evaluaciones Biométricas"])
 
-
-@router.post(
-    "/clientes/{cliente_id}/evaluaciones",
-    response_model=EvaluacionResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Registrar evaluación biométrica",
-)
-def registrar_evaluacion(
-    cliente_id: int,
+@router.post("/", response_model=dict, status_code=status.HTTP_201_CREATED)
+def crear_evaluacion(
     data: EvaluacionCreate,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Entrenador")),
 ):
-    return EvaluacionService().registrar_evaluacion(
-        db=db,
-        cliente_id=cliente_id,
-        entrenador_id=current_user["user_id"],
-        peso=data.peso,
-        estatura=data.estatura,
-        grasa_corporal=data.grasa_corporal,
-        observaciones=data.observaciones,
-    )
+    return EvaluacionService.crear(db, data, current_user["rol"], current_user["user_id"])
 
-
-@router.get(
-    "/clientes/{cliente_id}/evaluaciones",
-    response_model=List[EvaluacionResponse],
-    summary="Historial de evaluaciones de un cliente",
-)
-def obtener_evaluaciones(
-    cliente_id: int,
+@router.get("/", response_model=dict)
+def listar_evaluaciones(
+    skip: int = 0,
+    limit: int = 100,
+    cliente_id: Optional[int] = Query(None, description="Filtrar por cliente (solo admin/entrenador)"),
+    entrenador_id: Optional[int] = Query(None, description="Filtrar por entrenador (solo admin)"),
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Entrenador", "Cliente")),
 ):
-    return EvaluacionService().obtener_historial_cliente(db, cliente_id)
+    # Nota: el servicio ya aplica los filtros según el rol.
+    # Los parámetros cliente_id y entrenador_id se pasan, pero el servicio los ignora si el rol no tiene permiso.
+    return EvaluacionService.listar(db, skip, limit, current_user["rol"], current_user["user_id"], cliente_id, entrenador_id)
+
+@router.get("/{evaluacion_id}", response_model=dict)
+def obtener_evaluacion(
+    evaluacion_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_roles("Administrador", "Entrenador", "Cliente")),
+):
+    return EvaluacionService.obtener(db, evaluacion_id, current_user["rol"], current_user["user_id"])
+
+@router.put("/{evaluacion_id}", response_model=dict)
+def actualizar_evaluacion(
+    evaluacion_id: int,
+    data: EvaluacionUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_roles("Administrador", "Entrenador")),
+):
+    return EvaluacionService.actualizar(db, evaluacion_id, data, current_user["rol"], current_user["user_id"])
+
+@router.delete("/{evaluacion_id}", response_model=dict)
+def eliminar_evaluacion(
+    evaluacion_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_roles("Administrador", "Entrenador")),
+):
+    return EvaluacionService.eliminar(db, evaluacion_id, current_user["rol"], current_user["user_id"])
