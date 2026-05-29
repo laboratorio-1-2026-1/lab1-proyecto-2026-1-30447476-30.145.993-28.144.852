@@ -7,7 +7,7 @@ from app.api.core.security import require_roles
 from app.api.schemas.pago import PagoCreate, PagoResponse
 from app.api.repositories.pago_repository import PagoRepository
 from app.api.repositories.plan_repository import PlanRepository
-from app.api.repositories.cliente_repository import cliente_repository
+from app.api.repositories.cliente_repository import ClienteRepository
 
 router = APIRouter(prefix="/pagos", tags=["Pagos"])
 
@@ -18,7 +18,7 @@ def registrar_pago(
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
-    cliente = cliente_repository.get_by_id(db, data.cliente_id)
+    cliente = ClienteRepository.get_by_id(db, data.cliente_id)
     if not cliente:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente no encontrado")
 
@@ -55,7 +55,7 @@ def listar_pagos_cliente(
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
-    cliente = cliente_repository.get_by_id(db, cliente_id)
+    cliente = ClienteRepository.get_by_id(db, cliente_id)
     if not cliente:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente no encontrado")
     return PagoRepository.get_by_cliente(db, cliente_id)

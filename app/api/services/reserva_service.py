@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.models.reserva import Reserva
-from app.api.repositories.cliente_repository import cliente_repository
+from app.api.repositories.cliente_repository import ClienteRepository
 from app.api.repositories.reserva_repository import reserva_repository
 from app.api.repositories.sesion_repository import sesion_repository
 
@@ -27,7 +27,7 @@ class ReservaService:
         return r
 
     def crear(self, db: Session, cliente_id: int, sesion_id: int) -> Reserva:
-        cliente = cliente_repository.get_by_id(db, cliente_id)
+        cliente = ClienteRepository.get_by_id(db, cliente_id)
         if not cliente or not cliente.activo:
             raise HTTPException(
                 status_code=404,

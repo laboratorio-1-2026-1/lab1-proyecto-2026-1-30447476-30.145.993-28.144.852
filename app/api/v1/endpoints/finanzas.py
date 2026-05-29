@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.api.core.security import require_roles
 from app.api.database.session import get_db
-from app.api.repositories.finanzas_repository import finanzas_repository
+from app.api.repositories.finanzas_repository import FinanzasRepository
 
 router = APIRouter(prefix="/finanzas", tags=["Finanzas"])
 
@@ -17,7 +17,7 @@ def reporte_ingresos(
     db: Session = Depends(get_db),
     _: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
-    return finanzas_repository.ingresos_por_periodo(db, fecha_inicio, fecha_fin)
+    return FinanzasRepository.ingresos_por_periodo(db, fecha_inicio, fecha_fin)
 
 
 @router.get(
@@ -29,7 +29,7 @@ def resumen_membresias(
     _: dict = Depends(require_roles("Administrador", "Finanzas")),
 ):
     return {
-        "membresias_activas":  finanzas_repository.clientes_con_membresia_activa(db),
-        "membresias_vencidas": finanzas_repository.clientes_con_membresia_vencida(db),
+        "membresias_activas":  FinanzasRepository.clientes_con_membresia_activa(db),
+        "membresias_vencidas": FinanzasRepository.clientes_con_membresia_vencida(db),
         "timestamp": datetime.now(timezone.utc).isoformat(),
     } 

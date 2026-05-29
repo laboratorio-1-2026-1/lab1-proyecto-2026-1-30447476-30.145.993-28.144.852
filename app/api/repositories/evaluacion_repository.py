@@ -1,6 +1,6 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
-from app.api.models.evaluacion_biometrica import EvaluacionBiometrica
+from app.api.models.evaluacion import Evaluacion
 
 class EvaluacionRepository:
 
@@ -11,30 +11,30 @@ class EvaluacionRepository:
         limit: int = 100,
         cliente_id: Optional[int] = None,
         entrenador_id: Optional[int] = None
-    ) -> List[EvaluacionBiometrica]:
-        query = db.query(EvaluacionBiometrica)
+    ) -> List[Evaluacion]:
+        query = db.query(Evaluacion)
         if cliente_id:
-            query = query.filter(EvaluacionBiometrica.cliente_id == cliente_id)
+            query = query.filter(Evaluacion.cliente_id == cliente_id)
         if entrenador_id:
-            query = query.filter(EvaluacionBiometrica.entrenador_id == entrenador_id)
-        return query.order_by(EvaluacionBiometrica.fechaEvaluacion.desc()).offset(skip).limit(limit).all()
+            query = query.filter(Evaluacion.entrenador_id == entrenador_id)
+        return query.order_by(Evaluacion.fechaEvaluacion.desc()).offset(skip).limit(limit).all()
 
     @staticmethod
-    def get_by_id(db: Session, evaluacion_id: int) -> Optional[EvaluacionBiometrica]:
-        return db.query(EvaluacionBiometrica).filter(
-            EvaluacionBiometrica.idEvaluacionesBiometricas == evaluacion_id
+    def get_by_id(db: Session, evaluacion_id: int) -> Optional[Evaluacion]:
+        return db.query(Evaluacion).filter(
+            Evaluacion.idEvaluacionesBiometricas == evaluacion_id
         ).first()
 
     @staticmethod
-    def create(db: Session, **data) -> EvaluacionBiometrica:
-        evaluacion = EvaluacionBiometrica(**data)
+    def create(db: Session, **data) -> Evaluacion:
+        evaluacion = Evaluacion(**data)
         db.add(evaluacion)
         db.commit()
         db.refresh(evaluacion)
         return evaluacion
 
     @staticmethod
-    def update(db: Session, evaluacion_id: int, **data) -> Optional[EvaluacionBiometrica]:
+    def update(db: Session, evaluacion_id: int, **data) -> Optional[Evaluacion]:
         evaluacion = EvaluacionRepository.get_by_id(db, evaluacion_id)
         if not evaluacion:
             return None

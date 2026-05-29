@@ -3,10 +3,10 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.api.models.base import Base, TimestampMixin
 
-class EvaluacionBiometrica(Base, TimestampMixin):
-    __tablename__ = "evaluaciones_biometricas"
+class Evaluacion(Base, TimestampMixin):
+    __tablename__ = "evaluaciones"
 
-    idEvaluacionesBiometricas = Column(Integer, primary_key=True, index=True)
+    idEvaluacion = Column(Integer, primary_key=True, index=True)
     cliente_id = Column(Integer, ForeignKey("clientes.idCliente"), nullable=False)
     entrenador_id = Column(Integer, ForeignKey("entrenadores.idEntrenador"), nullable=False)
     fechaEvaluacion = Column(DateTime, default=datetime.utcnow, nullable=False)

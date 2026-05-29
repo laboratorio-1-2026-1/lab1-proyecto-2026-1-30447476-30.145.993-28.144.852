@@ -1,9 +1,12 @@
-from app.api.repositories.venta_repository import VentaRepository
-from app.api.repositories.producto_repository import ProductoRepository
+from typing import List, Dict, Any
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
-from typing import List, Dict, Any
 from datetime import datetime, timezone
+from app.api.repositories.venta_repository import VentaRepository
+from app.api.repositories.producto_repository import ProductoRepository
+from app.api.schemas.venta import VentaResponse, VentaCreate
+from app.api.core.errors import created_response, bad_request_response
+
 
 class VentaService:
     def __init__(self, db: Session):
@@ -130,12 +133,10 @@ class VentaService:
         }
 
     def listar_ventas(self, skip: int = 0, limit: int = 100) -> List[VentaResponse]:
-        from app.api.schemas.venta import VentaResponse
         ventas = self.venta_repo.get_all(self.db, skip=skip, limit=limit)
         return [VentaResponse.model_validate(v) for v in ventas]
 
     def obtener_venta(self, venta_id: int) -> VentaResponse:
-        from app.api.schemas.venta import VentaResponse
         venta = self.venta_repo.get_by_id(self.db, venta_id)
         if not venta:
             raise HTTPException(status_code=404, detail="Venta no encontrada")

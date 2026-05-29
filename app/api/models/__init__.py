@@ -35,4 +35,7 @@ __all__ = [
     "Plan",
     "Pago",
     "Evaluacion",
+    "Cliente",
+    "Disciplina",
+    "Entrenador",
 ]

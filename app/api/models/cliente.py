@@ -7,7 +7,7 @@ class Cliente(Base, TimestampMixin):
     __tablename__ = "clientes"
 
     idCliente = Column(Integer, primary_key=True, index=True)
-    usuario_id = Column(Integer, ForeignKey("usuarios.idUsuario"), nullable=True)
+    usuario_id = Column(Integer, ForeignKey("usuarios.idUsuarios"), nullable=True)
     nombre = Column(String(100), nullable=False)
     apellido = Column(String(100), nullable=False)
     cedula = Column(String(20), unique=True, nullable=False, index=True)

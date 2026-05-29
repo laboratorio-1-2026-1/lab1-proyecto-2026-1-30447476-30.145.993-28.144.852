@@ -6,7 +6,7 @@ from app.api.core.security import require_roles, get_current_user
 from app.api.services.evaluacion_service import EvaluacionService
 from app.api.schemas.evaluacion import EvaluacionCreate, EvaluacionUpdate
 
-router = APIRouter(prefix="/evaluaciones", tags=["Evaluaciones Biométricas"])
+router = APIRouter(prefix="/evaluaciones", tags=["Evaluaciones Biometricas"])
 
 @router.post("/", response_model=dict, status_code=status.HTTP_201_CREATED)
 def crear_evaluacion(
@@ -25,8 +25,7 @@ def listar_evaluaciones(
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador", "Entrenador", "Cliente")),
 ):
-    # Nota: el servicio ya aplica los filtros según el rol.
-    # Los parámetros cliente_id y entrenador_id se pasan, pero el servicio los ignora si el rol no tiene permiso.
+    
     return EvaluacionService.listar(db, skip, limit, current_user["rol"], current_user["user_id"], cliente_id, entrenador_id)
 
 @router.get("/{evaluacion_id}", response_model=dict)
