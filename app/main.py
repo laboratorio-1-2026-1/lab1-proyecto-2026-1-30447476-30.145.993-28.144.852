@@ -14,7 +14,7 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="SmartGym API — Laboratorio I 2026-1",
-    docs_url="/docs",
+    docs_url="/api-docs",
 )
 
 app.add_middleware(
