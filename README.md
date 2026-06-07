@@ -40,9 +40,14 @@ El proyecto está organizado en **tres capas principales**:
 
 ```
 📁 app/
-├── 🌐 api/          # Controladores — Rutas y validación de entrada
-├── 💼 domain/       # Servicios — Lógica de negocio
-└── 🗄️ infrastructure/  # Repositorios — Comunicación con PostgreSQL
+└── 📁 api/
+    ├── 🌐 v1/endpoints/   # Controladores — Rutas y validación de entrada
+    ├── 💼 services/        # Servicios — Lógica de negocio
+    ├── 🗄️ repositories/   # Repositorios — Comunicación con PostgreSQL
+    ├── 📐 schemas/         # Esquemas Pydantic — Validación de datos
+    ├── 🧩 models/          # Modelos SQLAlchemy — Entidades de la BD
+    ├── ⚙️ core/            # Configuración, seguridad y dependencias
+    └── 🌱 database/        # Seeders y sesión de base de datos
 ```
 
 ---
@@ -60,7 +65,55 @@ El sistema implementa **4 roles** con permisos diferenciados:
 
 ---
 
-## ⚙️ Instalación y Uso
+## 🐳 Levantar con Docker (Recomendado)
+
+Este es el método oficial de despliegue. Levanta la API y PostgreSQL con un solo comando.
+
+### Prerequisitos
+- Tener instalado [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/)
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476--30.145.993-28.144.852.git
+cd lab1-proyecto-2026-1-30447476--30.145.993-28.144.852
+```
+
+### 2. Levantar los servicios
+```bash
+docker compose up --build
+```
+
+Esto levanta automáticamente:
+- **PostgreSQL** en el puerto `5432`
+- **SmartGym API** en el puerto `8000`
+
+### 3. Poblar la base de datos con datos de prueba
+En otra terminal, ejecuta el seeder:
+```bash
+docker exec smartgym_api python -m app.api.database.seeders
+```
+
+### 4. Acceder a la API
+- **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+
+### 5. Detener los servicios
+```bash
+docker compose down
+```
+
+Para eliminar también los datos de la base de datos:
+```bash
+docker compose down -v
+```
+
+---
+
+## ⚙️ Instalación Local (Sin Docker)
+
+### Prerequisitos
+- Python 3.11+
+- PostgreSQL instalado y corriendo localmente
 
 ### 1. Clonar el repositorio
 ```bash
@@ -84,74 +137,77 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Configurar la base de datos
-El proyecto puede usar SQLite por defecto con `sqlite:///./smartgym.db`.
-Si deseas conectar PostgreSQL, define `DATABASE_URL` en el entorno o en un archivo `.env`.
+### 4. Configurar la base de datos PostgreSQL
+Crea una base de datos en tu PostgreSQL local y define la variable de entorno `DATABASE_URL`:
 
-Ejemplo de variable de entorno (PowerShell):
-```powershell
-$env:DATABASE_URL = 'postgresql://postgres:password@localhost:5432/smartgym_db'
+```bash
+# Linux/Mac
+export DATABASE_URL='postgresql://usuario:contraseña@localhost:5432/smartgym_db'
+
+# Windows PowerShell
+$env:DATABASE_URL = 'postgresql://usuario:contraseña@localhost:5432/smartgym_db'
+```
+
+O crea un archivo `.env` en la raíz del proyecto:
+```env
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/smartgym_db
+SECRET_KEY=supersecretkey_change_in_production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```
 
 ### 5. Poblar la base de datos con datos de prueba
-Ejecuta el seeder para crear roles, usuarios, máquinas, productos, planes y datos de prueba.
-
 ```bash
 python -m app.api.database.seeders
 ```
 
-Al ejecutar el seeder se crearán usuarios iniciales, incluyendo:
-
-- `admin@smartgym.com` / `Admin2026!`  — Administrador
-- `finanzas@smartgym.com` / `Finanzas2026!`  — Finanzas
-- `carlos@smartgym.com` / `Entrenador2026!`  — Entrenador
-- `laura@smartgym.com` / `Entrenador2026!`  — Entrenador
-- `maria@gmail.com` / `Cliente2026!`  — Cliente
-- `pedro@gmail.com` / `Cliente2026!`  — Cliente
-- `ana@gmail.com` / `Cliente2026!`  — Cliente
-
-### 6. Ejecutar localmente con Uvicorn
+### 6. Ejecutar la API
 ```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-### 7. Probar endpoints desde Swagger
-1. Abre Swagger UI en: `http://127.0.0.1:8000/docs`
-2. Usa el botón `Try it out` en `/api/v1/auth/login`.
-3. Envía el cuerpo JSON con credenciales, por ejemplo:
+---
+
+## 🌱 Datos de Prueba (Seeder)
+
+Al ejecutar el seeder se crean automáticamente los siguientes usuarios:
+
+| Email | Contraseña | Rol |
+|---|---|---|
+| `admin@smartgym.com` | `Admin2026!` | Administración |
+| `finanzas@smartgym.com` | `Finanzas2026!` | Finanzas |
+| `carlos@smartgym.com` | `Entrenador2026!` | Entrenador |
+| `laura@smartgym.com` | `Entrenador2026!` | Entrenador |
+| `maria@gmail.com` | `Cliente2026!` | Cliente |
+| `pedro@gmail.com` | `Cliente2026!` | Cliente |
+| `ana@gmail.com` | `Cliente2026!` | Cliente |
+
+También se crean: roles, categorías de máquinas, máquinas, planes de suscripción y productos de tienda.
+
+---
+
+## 📖 Documentación y Pruebas
+
+### Probar desde Swagger
+1. Abre [http://localhost:8000/docs](http://localhost:8000/docs)
+2. Usa `POST /api/v1/auth/login` con las credenciales de prueba:
 ```json
 {
   "email": "admin@smartgym.com",
   "password": "Admin2026!"
 }
 ```
-4. Copia el valor de `token` de la respuesta.
-5. Haz clic en el botón `Authorize` en Swagger e ingresa:
-```
-Bearer <token>
-```
-6. Ahora puedes probar cualquier endpoint protegido, por ejemplo:
-   - `/api/v1/auth/me`
-   - `/api/v1/pagos`
-   - `/api/v1/reservas`
-   - `/api/v1/usuarios`
+3. Copia el `token` de la respuesta.
+4. Haz clic en **Authorize** e ingresa: `Bearer <token>`
+5. Ya puedes probar cualquier endpoint protegido.
 
-### 8. Secuencia recomendada de pruebas
-1. Crear un usuario nuevo con `/api/v1/auth/register` (opcional).
-2. Iniciar sesión con `/api/v1/auth/login`.
-3. Usar el token devuelto para autorizar requests protegidos.
-4. Probar un endpoint protegido, por ejemplo `/api/v1/auth/me`.
-
-> Nota: también puedes ejecutar las mismas llamadas con `curl` si prefieres no usar Swagger.
-
----
-
-## 📖 Documentación
-
-Una vez ejecutada la API, accede a la documentación interactiva en:
-
-- **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
-- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+### Secuencia recomendada de pruebas
+1. Login con `POST /api/v1/auth/login`
+2. Verificar usuario con `GET /api/v1/auth/me`
+3. Consultar recursos: `/api/v1/maquinas`, `/api/v1/sesiones`, `/api/v1/planes`
+4. Registrar acceso físico con `POST /api/v1/accesos/entrada` (requiere cédula y membresía vigente)
+5. Crear reserva con `POST /api/v1/reservas`
+6. Registrar venta con `POST /api/v1/ventas`
 
 ---
 
