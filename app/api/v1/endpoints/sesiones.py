@@ -32,7 +32,7 @@ def listar_sesiones(
 def crear_sesion(
     sesion_data: SesionCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles(["admin", "entrenador"])),
+    current_user=Depends(require_roles(["Administrador", "Entrenador"])),
 ):
     nueva_sesion = Sesion(
         disciplina=sesion_data.disciplina,

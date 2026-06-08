@@ -9,13 +9,14 @@ class Usuario(Base, TimestampMixin):
     idUsuarios    = Column(Integer, primary_key=True, autoincrement=True)
     nombreUsuario = Column(String(100), unique=True, nullable=False)
     email         = Column(String(255), unique=True, nullable=False, index=True)
-    cedula        = Column(String(20), unique=True, nullable=True, index=True)  # NUEVO
+    cedula        = Column(String(20), unique=True, nullable=True, index=True)
     password_hash = Column(String(255), nullable=False)
     activo        = Column(Boolean, default=True, nullable=False)
     rol_id        = Column(Integer, ForeignKey("roles.idRol"), nullable=False)
 
-    rol     = relationship("Rol", back_populates="usuarios")
-    tickets = relationship("TicketsMantenimiento", back_populates="usuario")
+    rol      = relationship("Rol", back_populates="usuarios")
+    tickets  = relationship("TicketsMantenimiento", back_populates="usuario")
+    clientes = relationship("Cliente", back_populates="usuario")
 
     def __repr__(self):
         return f"<Usuario {self.email}>"

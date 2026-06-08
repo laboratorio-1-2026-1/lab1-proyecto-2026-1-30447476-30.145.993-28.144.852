@@ -30,4 +30,4 @@ app.include_router(api_router)
 
 @app.get("/", tags=["Health"])
 async def root():
-    return {"status": "ok", "docs": "/docs"}
+    return {"status": "ok", "docs": "/api-docs"}

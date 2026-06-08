@@ -24,7 +24,7 @@ def listar_planes(
 def crear_plan(
     plan_data: PlanCreate,
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles(["admin"])),
+    current_user=Depends(require_roles(["Administrador"])),
 ):
     nuevo_plan = Plan(
         nombre=plan_data.nombre,

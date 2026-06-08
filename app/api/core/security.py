@@ -71,10 +71,14 @@ async def get_current_user(
         )
 
 
-def require_roles(*roles: str):
+def require_roles(*roles):
     """
     Dependencia para validar roles.
+    Acepta una lista/tupla o varios roles como argumentos separados.
     """
+    if len(roles) == 1 and isinstance(roles[0], (list, tuple)):
+        roles = tuple(roles[0])
+
     async def checker(current_user: dict = Depends(get_current_user)) -> dict:
         if current_user["rol"] not in roles:
             raise HTTPException(

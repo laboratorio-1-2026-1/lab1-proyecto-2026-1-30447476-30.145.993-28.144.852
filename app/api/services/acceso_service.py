@@ -18,11 +18,6 @@ class AccesoService:
         return AccesoRepository.get_por_cliente(db, cliente_id)
 
     def registrar_entrada(self, db: Session, cedula: str):
-        """
-        REGLA CRÍTICA: Valida cédula y membresía vigente antes de permitir acceso.
-        Retorna 409 Conflict si el cliente no tiene membresía activa.
-        """
-        # 1. Buscar cliente por cédula (no por email)
         cliente = ClienteRepository.get_by_cedula(db, cedula)
         if not cliente:
             raise HTTPException(
@@ -46,12 +41,10 @@ class AccesoService:
                 },
             )
 
-        # 2. REGLA CRÍTICA: Verificar membresía activa
-        pago_repo = PagoRepository()
-        if not pago_repo.membresia_activa(db, cliente.idUsuarios):
+        if not PagoRepository.membresia_activa(db, cliente.idCliente):
             AccesoRepository.registrar_entrada(
                 db,
-                cliente_id=cliente.idUsuarios,
+                cliente_id=cliente.idCliente,
                 acceso_permitido=False,
                 mensaje="Acceso denegado: membresía vencida o inexistente.",
             )
@@ -65,10 +58,9 @@ class AccesoService:
                 },
             )
 
-        # 3. Membresía válida → registrar entrada exitosa
         return AccesoRepository.registrar_entrada(
             db,
-            cliente_id=cliente.idUsuarios,
+            cliente_id=cliente.idCliente,
             acceso_permitido=True,
             mensaje="Acceso permitido.",
         )

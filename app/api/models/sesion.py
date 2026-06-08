@@ -1,20 +1,21 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Time
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
-from app.api.database.session import Base
+from app.api.models.base import Base, TimestampMixin
 
 
-class Sesion(Base):
+class Sesion(Base, TimestampMixin):
     __tablename__ = "sesiones"
 
-    id = Column(Integer, primary_key=True, index=True)
-    disciplina = Column(String(100), nullable=False)
-    entrenador_id = Column(Integer, ForeignKey("usuarios.idUsuarios"))
-    fecha = Column(DateTime, nullable=False)
-    hora_inicio = Column(Time, nullable=False)
-    hora_fin = Column(Time, nullable=False)
-    cupo_maximo = Column(Integer, nullable=False)
-    cupos_disponibles = Column(Integer, nullable=False)
-    estado = Column(String(50), default="Programada", nullable=False)
+    id                 = Column(Integer, primary_key=True, index=True)
+    disciplina_id      = Column(Integer, ForeignKey("disciplinas.idDisciplina"), nullable=False)
+    entrenador_id      = Column(Integer, ForeignKey("entrenadores.idEntrenador"), nullable=False)
+    fecha_hora_inicio  = Column(DateTime, nullable=False)
+    fecha_hora_fin     = Column(DateTime, nullable=False)
+    cupo_maximo        = Column(Integer, nullable=False)
+    cupos_disponibles  = Column(Integer, nullable=False)
+    ubicacion          = Column(String(100), nullable=True)
+    estado             = Column(String(30), default="Programada", nullable=False)
 
-    entrenador = relationship("Usuario", backref="sesiones_dictadas")
-    reservas = relationship("Reserva", back_populates="sesion")
+    disciplina = relationship("Disciplina", back_populates="sesiones")
+    entrenador = relationship("Entrenador", back_populates="sesiones")
+    reservas   = relationship("Reserva", back_populates="sesion")

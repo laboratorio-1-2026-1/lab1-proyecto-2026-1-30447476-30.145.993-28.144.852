@@ -94,7 +94,7 @@ docker exec smartgym_api python -m app.api.database.seeders
 ```
 
 ### 4. Acceder a la API
-- **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Swagger UI:** [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
 - **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
 
 ### 5. Detener los servicios
@@ -189,7 +189,7 @@ También se crean: roles, categorías de máquinas, máquinas, planes de suscrip
 ## 📖 Documentación y Pruebas
 
 ### Probar desde Swagger
-1. Abre [http://localhost:8000/docs](http://localhost:8000/docs)
+1. Abre [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
 2. Usa `POST /api/v1/auth/login` con las credenciales de prueba:
 ```json
 {

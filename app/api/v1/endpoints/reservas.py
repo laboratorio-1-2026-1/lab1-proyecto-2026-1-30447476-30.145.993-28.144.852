@@ -14,7 +14,7 @@ router = APIRouter(prefix="/reservas", tags=["Reservas"])
 @router.get("", response_model=List[ReservaResponse])
 def listar_reservas(
     db: Session = Depends(get_db),
-    current_user=Depends(require_roles(["admin", "entrenador"])),
+    current_user=Depends(require_roles(["Administrador", "Entrenador"])),
 ):
     return reserva_service.listar_todas(db)
 
