@@ -1,110 +1,137 @@
-# 🏋️ SmartGym API
+╔══════════════════════════════════════╗
+║   🌸 SmartGym API 🌸                ║
+║   Gestión Integral de Gimnasios      ║
+╚══════════════════════════════════════╝
+> ✨ Plataforma API RESTful para la gestión integral de un gimnasio moderno  
+> 🎓 Laboratorio I — 2026-1 · Universidad Centroccidental Lisandro Alvarado
 
-> Plataforma API para Gestión Integral de Gimnasios  
-> **Laboratorio I — 2026-1**
-
----
-
-## 📌 Descripción
-
-SmartGym es una API RESTful desarrollada con **FastAPI** y **PostgreSQL** que permite la gestión integral de un gimnasio, incluyendo control de acceso, membresías, reservas, máquinas, finanzas y seguimiento biométrico. Implementa autenticación segura mediante **JWT** y control de acceso basado en roles (**RBAC**).
+</div>
 
 ---
 
-## 👥 Integrantes
+## 🌸 Descripción
 
-| Nombre | Cédula |
-|---|---|
-| Michelle Mendoza | 30.145.993 |
-| Karlianny Márquez | 28.144.852 |
-| Mercedes Cordero | 30.447.476 |
+**SmartGym** es una API RESTful desarrollada con **FastAPI** y **PostgreSQL** que centraliza la gestión operativa, financiera y administrativa de un gimnasio moderno. Cubre desde el control de acceso físico hasta el seguimiento biométrico de los clientes, con autenticación segura mediante **JWT** y control de acceso basado en roles **RBAC**.
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## 👩‍💻 Equipo de Desarrollo
+
+<div align="center">
+
+| 👩 Integrante | 🪪 Cédula | 💼 Módulos |
+|---|---|---|
+| **Michelle Mendoza** | 30.145.993 | Inventario, Máquinas, Tienda POS |
+| **Karlianny Márquez** | 28.144.852 | Finanzas, Planes, Clases y Reservas |
+| **Mercedes Cordero** | 30.447.476 | Auth, Acceso Físico, Seguridad |
+
+</div>
+
+---
+
+## 🛠️ Stack Tecnológico
+
+<div align="center">
 
 | Tecnología | Uso |
 |---|---|
-| **Python + FastAPI** | Framework principal para la API |
-| **PostgreSQL** | Motor de base de datos relacional |
-| **JWT + RBAC** | Autenticación y control de acceso por roles |
-| **Pydantic** | Validación y esquemas de datos |
-| **Docker** | Despliegue y portabilidad |
-| **OpenAPI / Swagger** | Documentación automática interactiva |
+| 🐍 **Python + FastAPI** | Framework principal — alto rendimiento y documentación automática |
+| 🐘 **PostgreSQL 15** | Motor relacional con integridad referencial completa |
+| 🔐 **JWT + RBAC** | Autenticación por Bearer Token y control por roles |
+| ✅ **Pydantic** | Validación estricta de esquemas de entrada y salida |
+| 🐳 **Docker + Compose** | Contenerización y despliegue reproducible |
+| 📖 **OpenAPI / Swagger** | Documentación interactiva autogenerada en `/api-docs` |
+
+</div>
 
 ---
 
-## 🏗️ Arquitectura
-
-El proyecto está organizado en **tres capas principales**:
+## 🏗️ Arquitectura en Capas
 
 ```
-📁 app/
-└── 📁 api/
-    ├── 🌐 v1/endpoints/   # Controladores — Rutas y validación de entrada
-    ├── 💼 services/        # Servicios — Lógica de negocio
-    ├── 🗄️ repositories/   # Repositorios — Comunicación con PostgreSQL
-    ├── 📐 schemas/         # Esquemas Pydantic — Validación de datos
-    ├── 🧩 models/          # Modelos SQLAlchemy — Entidades de la BD
-    ├── ⚙️ core/            # Configuración, seguridad y dependencias
-    └── 🌱 database/        # Seeders y sesión de base de datos
+💪 SmartGym API
+└── 📁 app/
+    └── 📁 api/
+        ├── 🌐 v1/endpoints/    ← Controladores: rutas y validación de entrada
+        ├── 💼 services/         ← Lógica de negocio y reglas del gimnasio
+        ├── 🗄️  repositories/   ← Acceso directo a PostgreSQL
+        ├── 📐 schemas/          ← Modelos Pydantic de request/response
+        ├── 🧩 models/           ← Entidades SQLAlchemy (tablas de la BD)
+        ├── ⚙️  core/            ← Config, seguridad y dependencias
+        └── 🌱 database/         ← Sesión de BD y Seeders
 ```
 
 ---
 
 ## 🔐 Roles del Sistema
 
-El sistema implementa **4 roles** con permisos diferenciados:
-
 | Rol | Permisos |
 |---|---|
-| **Administración** | Acceso total al sistema |
-| **Finanzas** | Gestión de pagos e inventario financiero |
-| **Entrenadores** | Gestión de rutinas y clientes asignados |
-| **Clientes** | Reservas, membresías y seguimiento personal |
+| 👑 **Administrador** | Control total: usuarios, máquinas, clases, finanzas |
+| 💰 **Finanzas** | Pagos, planes de suscripción, ventas y reportes |
+| 🏅 **Entrenador** | Ver clases programadas y registrar evaluaciones biométricas |
+| 🙋 **Cliente** | Reservar clases, consultar membresía e historial personal |
+
+---
+
+## ⚡ Reglas de Negocio Críticas
+
+| # | Regla | Código de Error |
+|---|---|---|
+| 1 | 🚫 Un cliente no puede reservar dos clases con horarios solapados | `ERR_RESERVA_SOLAPAMIENTO` |
+| 2 | 🚫 No se aceptan reservas si la sesión alcanzó su cupo máximo | `ERR_RESERVA_SIN_CUPOS` |
+| 3 | 🚫 El acceso físico se deniega si la membresía está vencida | `ERR_ACCESO_MEMBRESIA_INACTIVA` |
+| 4 | 🚫 Los pagos registrados son inmutables (no se pueden editar ni borrar) | `ERR_PAGO_INMUTABLE` |
+
+> Todos los errores retornan **HTTP 409 Conflict** con estructura JSON estricta:
+> ```json
+> {
+>   "error": "Conflict",
+>   "codigoInterno": "ERR_RESERVA_SOLAPAMIENTO",
+>   "mensaje": "Ya tienes una reserva activa en ese bloque horario.",
+>   "timestamp": "2026-06-16T10:00:00Z"
+> }
+> ```
 
 ---
 
 ## 🐳 Levantar con Docker (Recomendado)
 
-Este es el método oficial de despliegue. Levanta la API y PostgreSQL con un solo comando.
-
 ### Prerequisitos
-- Tener instalado [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/)
+- [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/) instalados
 
-### 1. Clonar el repositorio
+### 1️⃣ Clonar el repositorio
 ```bash
 git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852.git
 cd lab1-proyecto-2026-1-30447476-30.145.993-28.144.852
 ```
 
-### 2. Levantar los servicios
+### 2️⃣ Levantar los servicios
 ```bash
 docker compose up --build
 ```
 
 Esto levanta automáticamente:
-- **PostgreSQL** en el puerto `5432`
-- **SmartGym API** en el puerto `8000`
+- 🐘 **PostgreSQL** en el puerto `5432`
+- 💪 **SmartGym API** en el puerto `8000`
 
-### 3. Poblar la base de datos con datos de prueba
-En otra terminal, ejecuta el seeder:
+### 3️⃣ Poblar la base de datos
+En otra terminal:
 ```bash
 docker exec smartgym_api python -m app.api.database.seeders
 ```
 
-### 4. Acceder a la API
-- **Swagger UI:** [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
-- **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
+### 4️⃣ Acceder a la documentación
+| Interfaz | URL |
+|---|---|
+| 📖 Swagger UI | http://localhost:8000/api-docs |
+| 📄 ReDoc | http://localhost:8000/redoc |
+| 🔧 Health Check | http://localhost:8000/ |
 
-### 5. Detener los servicios
+### 5️⃣ Detener los servicios
 ```bash
-docker compose down
-```
-
-Para eliminar también los datos de la base de datos:
-```bash
-docker compose down -v
+docker compose down          # Detiene los contenedores
+docker compose down -v       # Detiene y elimina los datos
 ```
 
 ---
@@ -113,56 +140,32 @@ docker compose down -v
 
 ### Prerequisitos
 - Python 3.11+
-- PostgreSQL instalado y corriendo localmente
+- PostgreSQL corriendo localmente
 
-### 1. Clonar el repositorio
+### Pasos
 ```bash
+# 1. Clonar
 git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852.git
 cd lab1-proyecto-2026-1-30447476-30.145.993-28.144.852
-```
 
-### 2. Crear entorno virtual
-```bash
+# 2. Entorno virtual
 python -m venv .venv
-# Linux/Mac
-source .venv/bin/activate
-# Windows PowerShell
-.venv\Scripts\Activate.ps1
-# Windows CMD
-.venv\Scripts\activate.bat
-```
+source .venv/bin/activate        # Linux/Mac
+.venv\Scripts\Activate.ps1      # Windows PowerShell
 
-### 3. Instalar dependencias
-```bash
+# 3. Instalar dependencias
 pip install -r requirements.txt
-```
 
-### 4. Configurar la base de datos PostgreSQL
-Crea una base de datos en tu PostgreSQL local y define la variable de entorno `DATABASE_URL`:
-
-```bash
-# Linux/Mac
-export DATABASE_URL='postgresql://usuario:contraseña@localhost:5432/smartgym_db'
-
-# Windows PowerShell
-$env:DATABASE_URL = 'postgresql://usuario:contraseña@localhost:5432/smartgym_db'
-```
-
-O crea un archivo `.env` en la raíz del proyecto:
-```env
+# 4. Configurar variables de entorno (.env)
 DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/smartgym_db
 SECRET_KEY=supersecretkey_change_in_production
 ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-```
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-### 5. Poblar la base de datos con datos de prueba
-```bash
+# 5. Ejecutar seeder
 python -m app.api.database.seeders
-```
 
-### 6. Ejecutar la API
-```bash
+# 6. Iniciar API
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
@@ -170,47 +173,71 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 ## 🌱 Datos de Prueba (Seeder)
 
-Al ejecutar el seeder se crean automáticamente los siguientes usuarios:
+El seeder crea automáticamente todo lo necesario para probar el sistema:
 
-| Email | Contraseña | Rol |
+| 📧 Email | 🔑 Contraseña | 👤 Rol |
 |---|---|---|
-| `admin@smartgym.com` | `Admin2026!` | Administración |
+| `admin@smartgym.com` | `Admin2026!` | Administrador |
 | `finanzas@smartgym.com` | `Finanzas2026!` | Finanzas |
 | `carlos@smartgym.com` | `Entrenador2026!` | Entrenador |
 | `laura@smartgym.com` | `Entrenador2026!` | Entrenador |
-| `maria@gmail.com` | `Cliente2026!` | Cliente |
-| `pedro@gmail.com` | `Cliente2026!` | Cliente |
-| `ana@gmail.com` | `Cliente2026!` | Cliente |
+| `maria@gmail.com` | `Cliente2026!` | Cliente ✅ membresía activa |
+| `pedro@gmail.com` | `Cliente2026!` | Cliente ✅ membresía activa |
+| `ana@gmail.com` | `Cliente2026!` | Cliente ✅ membresía activa |
 
-También se crean: roles, categorías de máquinas, máquinas, planes de suscripción y productos de tienda.
+También se crean: **4 roles**, **3 categorías de máquinas**, **5 máquinas**, **3 categorías de productos**, **3 productos**, **3 planes de suscripción** y **5 sesiones de clase**.
 
 ---
 
-## 📖 Documentación y Pruebas
+## 📖 Cómo Probar la API
 
-### Probar desde Swagger
+### Desde Swagger UI
 1. Abre [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
-2. Usa `POST /api/v1/auth/login` con las credenciales de prueba:
+2. Haz login con `POST /api/v1/auth/login`:
 ```json
 {
   "email": "admin@smartgym.com",
   "password": "Admin2026!"
 }
 ```
-3. Copia el `token` de la respuesta.
-4. Haz clic en **Authorize** e ingresa: `Bearer <token>`
-5. Ya puedes probar cualquier endpoint protegido.
+3. Copia el `token` de la respuesta
+4. Haz clic en **🔓 Authorize** e ingresa: `Bearer <token>`
+5. ¡Listo! Ya puedes probar todos los endpoints protegidos
 
-### Secuencia recomendada de pruebas
-1. Login con `POST /api/v1/auth/login`
-2. Verificar usuario con `GET /api/v1/auth/me`
-3. Consultar recursos: `/api/v1/maquinas`, `/api/v1/sesiones`, `/api/v1/planes`
-4. Registrar acceso físico con `POST /api/v1/accesos/entrada` (requiere cédula y membresía vigente)
-5. Crear reserva con `POST /api/v1/reservas`
-6. Registrar venta con `POST /api/v1/ventas`
+### Secuencia recomendada
+```
+1. POST /api/v1/auth/login          → Obtener token
+2. GET  /api/v1/auth/me             → Verificar perfil
+3. GET  /api/v1/maquinas            → Ver inventario
+4. GET  /api/v1/sesiones            → Ver clases disponibles
+5. POST /api/v1/reservas            → Reservar una clase
+6. POST /api/v1/accesos/entrada     → Simular entrada al gimnasio
+7. POST /api/v1/tienda/ventas       → Registrar venta
+8. POST /api/v1/pagos               → Registrar pago de membresía
+```
 
 ---
 
-## 🔗 Repositorio
+## 📁 Módulos Implementados
 
-[https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852](https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852)
+| Módulo | Endpoints | Estado |
+|---|---|---|
+| 🔐 Autenticación y Roles | `/auth`, `/usuarios` | ✅ |
+| 🏋️ Inventario de Máquinas | `/maquinas`, `/categorias-maquinas` | ✅ |
+| 🔧 Mantenimiento | `/tickets-mantenimiento` | ✅ |
+| 🎽 Clases y Disciplinas | `/sesiones`, `/disciplinas`, `/entrenadores` | ✅ |
+| 📅 Reservas | `/reservas` | ✅ |
+| 🚪 Control de Acceso | `/accesos` | ✅ |
+| 💳 Finanzas y Planes | `/planes`, `/pagos`, `/finanzas` | ✅ |
+| 📊 Biométrico | `/evaluaciones` | ✅ |
+| 🛒 Tienda POS | `/tienda/productos`, `/tienda/ventas` | ✅ |
+| 👥 Clientes | `/clientes` | ✅ |
+
+---
+
+<div align="center">
+
+**💪 SmartGym API** · Laboratorio I 2026-1 · UCLA  
+Hecho con 🩷 por Michelle Mendoza · Karlianny Márquez · Mercedes Cordero
+
+</div>
