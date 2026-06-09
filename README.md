@@ -74,8 +74,8 @@ Este es el método oficial de despliegue. Levanta la API y PostgreSQL con un sol
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476--30.145.993-28.144.852.git
-cd lab1-proyecto-2026-1-30447476--30.145.993-28.144.852
+git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852.git
+cd lab1-proyecto-2026-1-30447476-30.145.993-28.144.852
 ```
 
 ### 2. Levantar los servicios
@@ -117,8 +117,8 @@ docker compose down -v
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476--30.145.993-28.144.852.git
-cd lab1-proyecto-2026-1-30447476--30.145.993-28.144.852
+git clone https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852.git
+cd lab1-proyecto-2026-1-30447476-30.145.993-28.144.852
 ```
 
 ### 2. Crear entorno virtual
@@ -213,4 +213,4 @@ También se crean: roles, categorías de máquinas, máquinas, planes de suscrip
 
 ## 🔗 Repositorio
 
-[https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476--30.145.993-28.144.852](https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476--30.145.993-28.144.852)
+[https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852](https://github.com/laboratorio-1-2026-1/lab1-proyecto-2026-1-30447476-30.145.993-28.144.852)
