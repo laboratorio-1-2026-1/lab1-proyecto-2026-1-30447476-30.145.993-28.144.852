@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from datetime import datetime, timezone
 from app.api.repositories.entrenador_repository import EntrenadorRepository
-from app.api.schemas.entrenador import EntrenadorCreate, EntrenadorUpdate
+from app.api.schemas.entrenador import EntrenadorResponse, EntrenadorCreate, EntrenadorUpdate
 
 class EntrenadorService:
 
@@ -37,7 +37,7 @@ class EntrenadorService:
         return {
             "status": "success",
             "mensaje": "Entrenador registrado exitosamente.",
-            "data": entrenador
+            "data": EntrenadorResponse.model_validate(entrenador)
         }
 
     @staticmethod
@@ -46,7 +46,7 @@ class EntrenadorService:
         return {
             "status": "success",
             "mensaje": f"Se encontraron {len(entrenadores)} entrenadores.",
-            "data": entrenadores
+            "data": [EntrenadorResponse.model_validate(e) for e in entrenadores]
         }
 
     @staticmethod
@@ -57,7 +57,7 @@ class EntrenadorService:
         return {
             "status": "success",
             "mensaje": "Entrenador encontrado.",
-            "data": entrenador
+            "data": EntrenadorResponse.model_validate(entrenador)
         }
 
     @staticmethod
@@ -77,7 +77,7 @@ class EntrenadorService:
         return {
             "status": "success",
             "mensaje": "Entrenador actualizado exitosamente.",
-            "data": entrenador_actualizado
+            "data": EntrenadorResponse.model_validate(entrenador_actualizado)
         }
 
     @staticmethod
