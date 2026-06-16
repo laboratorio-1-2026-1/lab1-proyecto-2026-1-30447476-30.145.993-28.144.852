@@ -99,12 +99,12 @@ def cambiar_estado(
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_roles("Administrador")),
 ):
-    if data.estado_operativo not in ESTADOS_VALIDOS:
+    if data.estadoOperativo not in ESTADOS_VALIDOS:
         return bad_request_response(
             mensaje=f"Estado inválido. Valores permitidos: {ESTADOS_VALIDOS}",
             codigo_interno="ERR_ESTADO_INVALIDO"
         )
-    maquina = MaquinaRepository.update_estado(db, maquina_id, data.estado_operativo)
+    maquina = MaquinaRepository.update_estado(db, maquina_id, data.estadoOperativo)
     if not maquina:
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
     return maquina
@@ -123,3 +123,6 @@ def eliminar_maquina(
     if not eliminado:
         raise HTTPException(status_code=404, detail="Máquina no encontrada")
     return None
+
+
+    
