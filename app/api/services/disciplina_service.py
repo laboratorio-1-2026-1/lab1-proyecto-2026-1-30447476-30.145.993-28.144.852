@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from datetime import datetime, timezone
 from app.api.repositories.disciplina_repository import DisciplinaRepository
-from app.api.schemas.disciplina import DisciplinaCreate, DisciplinaUpdate
+from app.api.schemas.disciplina import DisciplinaResponse, DisciplinaCreate, DisciplinaUpdate
 
 class DisciplinaService:
 
@@ -22,7 +22,7 @@ class DisciplinaService:
         return {
             "status": "success",
             "mensaje": "Disciplina creada exitosamente.",
-            "data": disciplina
+            "data": DisciplinaResponse.model_validate(disciplina)
         }
 
     @staticmethod
@@ -31,7 +31,7 @@ class DisciplinaService:
         return {
             "status": "success",
             "mensaje": f"Se encontraron {len(disciplinas)} disciplinas.",
-            "data": disciplinas
+            "data": [DisciplinaResponse.model_validate(d) for d in disciplinas]
         }
 
     @staticmethod
@@ -42,7 +42,7 @@ class DisciplinaService:
         return {
             "status": "success",
             "mensaje": "Disciplina encontrada.",
-            "data": disciplina
+            "data": DisciplinaResponse.model_validate(disciplina)
         }
 
     @staticmethod
@@ -66,7 +66,7 @@ class DisciplinaService:
         return {
             "status": "success",
             "mensaje": "Disciplina actualizada exitosamente.",
-            "data": disciplina_actualizada
+            "data": DisciplinaResponse.model_validate(disciplina_actualizada)
         }
 
     @staticmethod
